@@ -57,7 +57,7 @@ const adminMenuList = [
   {
     title: "Kullanıcılar",
     icon: "person",
-    link: "https://quasar.dev",
+    link: "/userlist",
   },
 ];
 

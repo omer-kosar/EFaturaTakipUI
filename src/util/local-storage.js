@@ -5,7 +5,8 @@ const saveItemToStorage = (itemName, data) => {
 };
 
 const getItemFromStorage = (itemName) => {
-  if (LocalStorage.has(itemName)) return LocalStorage.getItem(itemName);
-  return {};
+  return LocalStorage.getItem(itemName);
+  // if (LocalStorage.has(itemName))
+  // return {};
 };
 export { saveItemToStorage, getItemFromStorage };
