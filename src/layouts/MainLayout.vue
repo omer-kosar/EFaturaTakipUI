@@ -12,8 +12,17 @@
         />
 
         <q-toolbar-title> EFaturaTakip </q-toolbar-title>
-
-        <div>Quasar v{{ $q.version }}</div>
+        <q-space></q-space>
+        <div class="q-gutter-sm row items-center no-wrap">
+          <q-item clickable v-ripple>
+            <q-item-section avatar>
+              <q-avatar size="26px">
+                <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>{{ userName }}</q-item-section>
+          </q-item>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -52,7 +61,10 @@
 import { useQuasar } from "quasar";
 import Menu from "components/Menu.vue";
 import { defineComponent, ref } from "vue";
+import { useStore } from "vuex";
+
 import { saveItemToStorage } from "src/util/local-storage";
+
 const adminMenuList = [
   {
     title: "Kullanıcılar",
@@ -69,12 +81,15 @@ export default defineComponent({
   },
 
   setup() {
+    const store = useStore();
+
     const $q = useQuasar();
     const leftDrawerOpen = ref(false);
     const modClick = () => {
       $q.dark.toggle();
       saveItemToStorage("darkMode", $q.dark.isActive);
     };
+    let userName = store.getters["user/getUserName"];
     return {
       menuList: adminMenuList,
       leftDrawerOpen,
@@ -82,6 +97,7 @@ export default defineComponent({
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
+      userName,
     };
   },
 });

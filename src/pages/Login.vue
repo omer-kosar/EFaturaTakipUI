@@ -70,10 +70,12 @@ import { ref } from "vue";
 import { login } from "src/api/authentication.api";
 import { saveItemToStorage } from "src/util/local-storage";
 import { useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 export default defineComponent({
   setup() {
     const router = useRouter();
+    const store = useStore();
 
     const refPhone = ref("");
     const refPassword = ref("");
@@ -88,9 +90,12 @@ export default defineComponent({
       refPassword.value.validate();
       if (refPhone.value.hasError || refPassword.value.hasError) return;
       loading.value = true;
+
       login(loginModel.value)
         .then((response) => {
+          console.warn("user info===", response.data);
           saveItemToStorage("user", response.data);
+          store.dispatch("user/setUser", response.data);
           router.push("/");
         })
         .finally(() => {
