@@ -1,6 +1,7 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
 import { handleError, handleValidationError } from "src/util/handle-error";
+import { getItemFromStorage } from "src/util/local-storage";
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -10,6 +11,17 @@ import { handleError, handleValidationError } from "src/util/handle-error";
 // for each client)
 const api = axios.create({ baseURL: process.env.baseUrl });
 
+api.interceptors.request.use(
+  function (config) {
+    let user = getItemFromStorage("user");
+    if (!user) return;
+    config.headers.Authorization = `Bearer ${user?.token}`;
+    return config;
+  },
+  function (error) {
+    return Promise.reject(error);
+  }
+);
 api.interceptors.response.use(
   (response) => {
     return response;
@@ -17,6 +29,10 @@ api.interceptors.response.use(
   (error) => {
     if (error.response.status === 422) {
       handleValidationError(error.response.data);
+      return;
+    }
+    if (error.response.status === 401) {
+      window.location.href = "#/accessdenied";
       return;
     }
     handleError(error);

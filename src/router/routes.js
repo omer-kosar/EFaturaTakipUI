@@ -16,6 +16,11 @@ const routes = [
         component: () => import("pages/UserList.vue"),
         meta: { authorize: [Role.Admin] },
       },
+      {
+        path: "/inboxinvoicelist",
+        component: () => import("pages/InboxInvoiceList.vue"),
+        meta: { authorize: [Role.Admin] },
+      },
     ],
   },
   { path: "/login", component: () => import("pages/Login.vue") },

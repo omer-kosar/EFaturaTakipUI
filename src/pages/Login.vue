@@ -93,7 +93,6 @@ export default defineComponent({
 
       login(loginModel.value)
         .then((response) => {
-          console.warn("user info===", response.data);
           saveItemToStorage("user", response.data);
           store.dispatch("user/setUser", response.data);
           router.push("/");
