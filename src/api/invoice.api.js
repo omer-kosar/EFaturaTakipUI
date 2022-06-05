@@ -8,4 +8,12 @@ const approveInboxInvoices = (invoiceIdList) =>
 const declineInboxInvoices = (invoiceIdList) =>
   api.post("invoice/declineInboxInvoices", invoiceIdList);
 
-export { getInboxInvoiceList, approveInboxInvoices, declineInboxInvoices };
+const sendInvoiceEMail = (invoiceEMail) =>
+  api.post(`invoice/sendMail/${invoiceEMail.invoiceId}`, invoiceEMail);
+
+export {
+  getInboxInvoiceList,
+  approveInboxInvoices,
+  declineInboxInvoices,
+  sendInvoiceEMail,
+};

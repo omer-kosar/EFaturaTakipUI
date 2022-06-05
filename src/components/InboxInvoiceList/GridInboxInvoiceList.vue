@@ -101,15 +101,7 @@
                 </q-item>
                 <q-separator />
 
-                <q-item clickable v-close-popup @click="yazdir(props.row)">
-                  <q-item-section avatar>
-                    <q-icon name="print"></q-icon>
-                  </q-item-section>
-                  <q-item-section>Yazdır</q-item-section>
-                </q-item>
-                <q-separator />
-
-                <q-item clickable v-close-popup @click="yazdir(props.row)">
+                <q-item clickable v-close-popup @click="showInvoice(props.row)">
                   <q-item-section avatar>
                     <q-icon name="visibility"></q-icon>
                   </q-item-section>
@@ -117,7 +109,7 @@
                 </q-item>
                 <q-separator />
 
-                <q-item clickable v-close-popup @click="yazdir(props.row)">
+                <q-item clickable v-close-popup @click="sendEMail(props.row)">
                   <q-item-section avatar>
                     <q-icon name="email"></q-icon>
                   </q-item-section>
@@ -219,6 +211,12 @@ export default defineComponent({
       );
       return selected;
     };
+    const showInvoice = (invoice) => {
+      emit("show-invoice", invoice);
+    };
+    const sendEMail = (invoice) => {
+      emit("send-email", invoice);
+    };
     return {
       inboxInvoiceList,
       loading,
@@ -229,6 +227,8 @@ export default defineComponent({
       selected,
       approve,
       decline,
+      showInvoice,
+      sendEMail,
     };
   },
 });

@@ -14,7 +14,7 @@ const api = axios.create({ baseURL: process.env.baseUrl });
 api.interceptors.request.use(
   function (config) {
     let user = getItemFromStorage("user");
-    if (!user) return;
+    if (!user) return config;
     config.headers.Authorization = `Bearer ${user?.token}`;
     return config;
   },
@@ -27,6 +27,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.warn(error);
     if (error.response.status === 422) {
       handleValidationError(error.response.data);
       return;

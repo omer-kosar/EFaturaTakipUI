@@ -37,6 +37,8 @@
         :filter="searchText"
         @approve="approve"
         @decline="decline"
+        @show-invoice="showInvoice"
+        @send-email="sendEMail"
       ></component>
       <div class="row justify-center q-mt-md">
         <q-pagination
@@ -49,6 +51,11 @@
         />
       </div>
     </div>
+    <dialog-send-invoice-e-mail
+      :dialogState="dialogSendEMailState"
+      :invoice="invoiceAsEMail"
+      @dialog-send-invoice-email-close="dialogSendEMailState = false"
+    ></dialog-send-invoice-e-mail>
   </q-page>
 </template>
 
@@ -63,11 +70,18 @@ import {
 } from "src/api/invoice.api";
 import { useQuasar } from "quasar";
 import { warning } from "src/util/notify";
+import { useStore } from "vuex";
+import DialogSendInvoiceEMail from "src/components/InboxInvoiceList/DialogSendInvoiceEMail.vue";
 export default defineComponent({
-  components: { GridInboxInvoiceList, GridInboxInvioceListMobile },
+  components: {
+    GridInboxInvoiceList,
+    GridInboxInvioceListMobile,
+    DialogSendInvoiceEMail,
+  },
   setup() {
     const $q = useQuasar();
-
+    const store = useStore();
+    let dialogSendEMailState = ref(false);
     let searchText = ref("");
     let inboxInvoiceList = ref([]);
     let loading = ref(false);
@@ -77,7 +91,7 @@ export default defineComponent({
       page: 1,
       rowsPerPage: $q.screen.lt.xl ? 7 : 10,
     });
-
+    let invoiceAsEMail = ref({});
     const getInvoiceList = () => {
       loading.value = true;
       pagination.value.page = 1;
@@ -129,6 +143,18 @@ export default defineComponent({
           loading.value = false;
         });
     };
+
+    const sendEMail = (invoice) => {
+      invoiceAsEMail.value = invoice;
+      dialogSendEMailState.value = true;
+    };
+    const showInvoice = (invoice) => {
+      let userId = store.getters["user/getUserId"];
+      window.open(
+        `https://localhost:7106/api/Invoice/ShowInvoice/${invoice.eFaturaId}/${userId}`,
+        "_blank"
+      );
+    };
     getInvoiceList();
     return {
       searchText,
@@ -141,6 +167,10 @@ export default defineComponent({
       btnRefresh,
       approve,
       decline,
+      showInvoice,
+      sendEMail,
+      dialogSendEMailState,
+      invoiceAsEMail,
     };
   },
 });
