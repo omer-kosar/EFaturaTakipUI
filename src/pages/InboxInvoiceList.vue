@@ -69,7 +69,7 @@ import {
   getInboxInvoiceList,
 } from "src/api/invoice.api";
 import { useQuasar } from "quasar";
-import { warning } from "src/util/notify";
+import { success, warning } from "src/util/notify";
 import { useStore } from "vuex";
 import DialogSendInvoiceEMail from "src/components/InboxInvoiceList/DialogSendInvoiceEMail.vue";
 export default defineComponent({
@@ -119,7 +119,7 @@ export default defineComponent({
       loading.value = true;
       approveInboxInvoices(invoiceIdList)
         .then((response) => {
-          console.warn("approve response", response);
+          success(response.data);
         })
         .finally(() => {
           loading.value = false;
@@ -137,7 +137,7 @@ export default defineComponent({
 
       declineInboxInvoices(invoiceIdList)
         .then((response) => {
-          console.warn("approve response", response);
+          success(response.data);
         })
         .finally(() => {
           loading.value = false;

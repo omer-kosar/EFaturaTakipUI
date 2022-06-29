@@ -27,6 +27,18 @@ const routes = [
         component: () => import("pages/ShowInvoice.vue"),
         meta: { authorize: [Role.Admin] },
       },
+
+      {
+        path: "/saveStock/:id?",
+        component: () => import("pages/SaveStock.vue"),
+        name: "save-stock",
+        meta: { authorize: [Role.Admin] },
+      },
+      {
+        path: "/stocklist",
+        component: () => import("pages/StockList.vue"),
+        meta: { authorize: [Role.Admin] },
+      },
     ],
   },
   { path: "/login", component: () => import("pages/Login.vue") },

@@ -72,7 +72,7 @@
           <br />
           <span class="text-weight-bold">
             <q-chip square text-color="white" color="positive">
-              {{ props.row.vat18F }}
+              {{ props.row.payableAmountF }}
             </q-chip>
           </span>
         </q-td>
