@@ -130,7 +130,9 @@ export default defineComponent({
         return;
       }
       createStock(stockModel.value)
-        .then((response) => {})
+        .then((response) => {
+          success(response.data);
+        })
         .finally(() => {
           loading.value = false;
         });

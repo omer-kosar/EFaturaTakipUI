@@ -2,22 +2,22 @@
   <q-page>
     <div class="q-pa-md">
       <component
-        :is="$q.screen.lt.sm ? 'GridStockListMobile' : 'GridStockList'"
-        :stockList="stockList"
+        :is="$q.screen.lt.sm ? 'GridCompanyListMobile' : 'GridCompanyList'"
+        :companyList="companyList"
         :loading="loading"
-        @stock-delete="openDeleteWarning"
-        @stock-update="updateStock"
+        @company-delete="openDeleteWarning"
+        @company-update="updateCompany"
       />
     </div>
     <dialog-delete-warning
       :dialogState="deleteWarningState"
       @dialog-delete-warning-close="deleteWarningState = false"
-      @dialog-delete-click="deleteStock"
+      @dialog-delete-click="deleteCompany"
     >
-      <template v-slot:title>Stok Sil</template>
+      <template v-slot:title>Firma Sil</template>
       <template v-slot:content>
         <div class="text-subtitle2">
-          Seçili stok silinecek. Devam etmek istiyor musunuz?
+          Seçili firma silinecek. Devam etmek istiyor musunuz?
         </div>
       </template>
     </dialog-delete-warning>
@@ -27,56 +27,55 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { useRouter } from "vue-router";
-import GridStockList from "src/components/Stock/GridStockList.vue";
-import GridStockListMobile from "src/components/Stock/GridStockListMobile.vue";
-import { getList, stockDelete } from "src/api/stock.api";
+import GridCompanyList from "src/components/Company/GridCompanyList.vue";
+import GridCompanyListMobile from "src/components/Company/GridCompanyListMobile.vue";
 import DialogDeleteWarning from "src/components/Common/DialogDeleteWarning.vue";
 import { success } from "src/util/notify";
+import { companyDelete, getList } from "src/api/company.api";
+
 export default defineComponent({
-  components: { GridStockList, GridStockListMobile, DialogDeleteWarning },
+  components: { GridCompanyList, GridCompanyListMobile, DialogDeleteWarning },
+
   setup() {
     const router = useRouter();
-
-    let stockList = ref([]);
+    let companyList = ref([]);
     let loading = ref(false);
     let deleteWarningState = ref(false);
-    const getStockList = () => {
+    const getCompanyList = () => {
       loading.value = true;
       getList()
         .then((response) => {
-          stockList.value = response.data;
+          companyList.value = response.data;
         })
         .finally(() => {
           loading.value = false;
         });
     };
-    const selectedStock = ref({});
-    const openDeleteWarning = (stock) => {
-      selectedStock.value = stock;
+    const selectedCompany = ref({});
+    const openDeleteWarning = (company) => {
+      selectedCompany.value = company;
       deleteWarningState.value = true;
     };
-    const deleteStock = () => {
-      stockDelete(selectedStock.value.stockId).then((response) => {
+    const deleteCompany = () => {
+      companyDelete(selectedCompany.value.companyId).then((response) => {
         deleteWarningState.value = false;
-        stockList.value = stockList.value.filter(
-          (stock) => stock.stockId != selectedStock.value.stockId
+        companyList.value = companyList.value.filter(
+          (company) => company.companyId != selectedCompany.value.companyId
         );
         success(response.data);
       });
     };
-    const updateStock = (stock) => {
-      console.warn(stock);
-      router.push({ name: "save-stock", params: { id: stock.stockId } });
+    const updateCompany = (company) => {
+      router.push({ name: "save-company", params: { id: company.companyId } });
     };
-    getStockList();
-
+    getCompanyList();
     return {
-      stockList,
+      companyList,
       loading,
       openDeleteWarning,
       deleteWarningState,
-      deleteStock,
-      updateStock,
+      deleteCompany,
+      updateCompany,
     };
   },
 });

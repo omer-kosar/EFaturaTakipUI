@@ -151,7 +151,7 @@ export default defineComponent({
     const showInvoice = (invoice) => {
       let userId = store.getters["user/getUserId"];
       window.open(
-        `https://localhost:7106/api/Invoice/ShowInvoice/${invoice.eFaturaId}/${userId}`,
+        `https://localhost:7106/api/Invoices/ShowInvoice/${invoice.eFaturaId}/${userId}`,
         "_blank"
       );
     };

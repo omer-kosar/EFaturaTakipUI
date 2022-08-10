@@ -34,9 +34,23 @@ const routes = [
         name: "save-stock",
         meta: { authorize: [Role.Admin] },
       },
+
+      {
+        path: "/saveCompany/:id?",
+        component: () => import("pages/SaveCompany.vue"),
+        name: "save-company",
+        meta: { authorize: [Role.Admin] },
+      },
+
       {
         path: "/stocklist",
         component: () => import("pages/StockList.vue"),
+        meta: { authorize: [Role.Admin] },
+      },
+
+      {
+        path: "/companylist",
+        component: () => import("pages/CompanyList.vue"),
         meta: { authorize: [Role.Admin] },
       },
     ],
