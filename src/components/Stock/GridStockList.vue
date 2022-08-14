@@ -26,12 +26,33 @@
         </q-td>
 
         <q-td key="buttons" :props="props">
-          <q-btn color="red" class="q-mr-sm" @click="btnDeleteClick(props.row)"
-            >Sil</q-btn
-          >
-          <q-btn color="info" @click="btnUpdateClick(props.row)"
-            >Güncelle</q-btn
-          >
+          <q-btn icon="more_horiz" :dense="$q.screen.lt.md">
+            <q-menu>
+              <q-list style="min-width: 120px">
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="btnUpdateClick(props.row)"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="edit"></q-icon>
+                  </q-item-section>
+                  <q-item-section>Güncelle</q-item-section>
+                </q-item>
+                <q-separator />
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="btnDeleteClick(props.row)"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="delete"></q-icon>
+                  </q-item-section>
+                  <q-item-section>Sil</q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
         </q-td>
       </q-tr>
     </template>

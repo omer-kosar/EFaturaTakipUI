@@ -17,7 +17,8 @@ const Unit = {
 
 const CompanyType = {
   Person: 1,
-  Corporate: 2,
+  SoleProprietorship: 2,
+  Corporate: 3,
 };
 const mapUserType = new Map([
   [userType.admin, "Admin"],

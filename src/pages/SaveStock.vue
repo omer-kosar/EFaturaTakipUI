@@ -61,7 +61,14 @@
               </q-item>
             </q-list>
           </q-card-section>
-          <q-card-actions align="right">
+          <q-card-actions align="between">
+            <q-btn
+              class="text-capitalize bg-info text-white q-mr-md"
+              @click="btnGoBackList"
+              color="orange"
+              >Listeye Dön</q-btn
+            >
+
             <q-btn
               class="text-capitalize bg-info text-white q-mr-md"
               @click="btnSaveClick"
@@ -77,7 +84,7 @@
 <script>
 import { TaxValueAdded, Unit } from "src/util/constants";
 import { defineComponent, ref } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 
 import { createStock, getStockItem, updateStock } from "src/api/stock.api";
 import {
@@ -101,6 +108,8 @@ const unitOptions = [
 export default defineComponent({
   setup() {
     const route = useRoute();
+    const router = useRouter();
+
     let stockId = route.params.id;
 
     let stockModel = ref({});
@@ -140,6 +149,9 @@ export default defineComponent({
     if (stockId) {
       getStock(stockId);
     }
+    const btnGoBackList = () => {
+      router.push({ name: "stock-list" });
+    };
     const refName = ref("");
     const refPrice = ref("");
     const refUnit = ref("");
@@ -167,6 +179,7 @@ export default defineComponent({
       rulesValueAddedTax,
       rulesUnit,
       btnSaveClick,
+      btnGoBackList,
       refName,
       refPrice,
       refUnit,

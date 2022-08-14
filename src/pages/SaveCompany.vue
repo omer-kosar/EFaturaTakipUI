@@ -116,6 +116,50 @@
                   />
                 </q-item-section>
               </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    clearable
+                    clear-icon="close"
+                    v-model="companyModel.serviceUserName"
+                    label="Servis Kullanıcı Adı"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    clearable
+                    clear-icon="close"
+                    v-model="companyModel.servicePassword"
+                    label="Servis Kullanıcı Parolası"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    clearable
+                    clear-icon="close"
+                    v-model="companyModel.commercialRegistrationNumber"
+                    label="Ticari Sicil No"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    clearable
+                    clear-icon="close"
+                    v-model="companyModel.centralRegistrationNumber"
+                    label="MERSİS No"
+                  />
+                </q-item-section>
+              </q-item>
               <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input

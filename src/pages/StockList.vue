@@ -1,6 +1,11 @@
 <template>
   <q-page>
     <div class="q-pa-md">
+      <div class="row q-pb-sm justify-end">
+        <q-btn icon="add" color="green" @click="btnNewStockClick"
+          >Yeni Stok Kaydet</q-btn
+        >
+      </div>
       <component
         :is="$q.screen.lt.sm ? 'GridStockListMobile' : 'GridStockList'"
         :stockList="stockList"
@@ -56,17 +61,23 @@ export default defineComponent({
       deleteWarningState.value = true;
     };
     const deleteStock = () => {
-      stockDelete(selectedStock.value.stockId).then((response) => {
-        deleteWarningState.value = false;
-        stockList.value = stockList.value.filter(
-          (stock) => stock.stockId != selectedStock.value.stockId
-        );
-        success(response.data);
-      });
+      stockDelete(selectedStock.value.stockId)
+        .then((response) => {
+          deleteWarningState.value = false;
+          stockList.value = stockList.value.filter(
+            (stock) => stock.stockId != selectedStock.value.stockId
+          );
+          success(response.data);
+        })
+        .finally(() => {
+          deleteWarningState.value = false;
+        });
     };
     const updateStock = (stock) => {
-      console.warn(stock);
       router.push({ name: "save-stock", params: { id: stock.stockId } });
+    };
+    const btnNewStockClick = () => {
+      router.push({ name: "save-stock" });
     };
     getStockList();
 
@@ -77,6 +88,7 @@ export default defineComponent({
       deleteWarningState,
       deleteStock,
       updateStock,
+      btnNewStockClick,
     };
   },
 });
@@ -84,7 +96,7 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .grid-height
-  height: calc(100vh - 110px)
+  height: calc(100vh - 130px)
   @media (min-width:360px) and (max-width:768px)
         height: calc(100vh - 450px)
   @media (max-width:360px)

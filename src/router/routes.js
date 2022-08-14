@@ -10,11 +10,17 @@ const routes = [
         component: () => import("pages/Index.vue"),
         meta: { authorize: [Role.Admin] },
       },
-
+      {
+        path: "/saveUser/:id?",
+        component: () => import("pages/SaveUser.vue"),
+        name: "save-user",
+        meta: { authorize: [Role.Admin] },
+      },
       {
         path: "/userlist",
         component: () => import("pages/UserList.vue"),
         meta: { authorize: [Role.Admin] },
+        name: "user-list",
       },
       {
         path: "/inboxinvoicelist",
@@ -46,6 +52,7 @@ const routes = [
         path: "/stocklist",
         component: () => import("pages/StockList.vue"),
         meta: { authorize: [Role.Admin] },
+        name: "stock-list",
       },
 
       {

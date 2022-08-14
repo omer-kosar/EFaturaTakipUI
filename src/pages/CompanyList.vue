@@ -57,13 +57,17 @@ export default defineComponent({
       deleteWarningState.value = true;
     };
     const deleteCompany = () => {
-      companyDelete(selectedCompany.value.companyId).then((response) => {
-        deleteWarningState.value = false;
-        companyList.value = companyList.value.filter(
-          (company) => company.companyId != selectedCompany.value.companyId
-        );
-        success(response.data);
-      });
+      companyDelete(selectedCompany.value.companyId)
+        .then((response) => {
+          deleteWarningState.value = false;
+          companyList.value = companyList.value.filter(
+            (company) => company.companyId != selectedCompany.value.companyId
+          );
+          success(response.data);
+        })
+        .finally(() => {
+          deleteWarningState.value = false;
+        });
     };
     const updateCompany = (company) => {
       router.push({ name: "save-company", params: { id: company.companyId } });

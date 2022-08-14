@@ -30,13 +30,14 @@ api.interceptors.response.use(
     console.warn(error);
     if (error.response.status === 422) {
       handleValidationError(error.response.data);
-      return;
+      return Promise.reject(error);
     }
     if (error.response.status === 401) {
       window.location.href = "#/accessdenied";
       return;
     }
     handleError(error);
+    return Promise.reject(error);
   }
 );
 export default boot(({ app }) => {
