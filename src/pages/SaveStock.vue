@@ -5,7 +5,7 @@
         <q-card class="card-bg text-white">
           <q-card-section class="q-pa-sm">
             <q-list class="row">
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input
                     dense
@@ -13,21 +13,6 @@
                     label="Stok Adı"
                     :rules="[rulesName]"
                     ref="refName"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-input
-                    dense
-                    v-model="stockModel.price"
-                    label="Fiyat"
-                    :rules="[rulesPrice]"
-                    ref="refPrice"
-                    filled
-                    fill-mask="0"
-                    reverse-fill-mask
-                    mask="#.##"
                   />
                 </q-item-section>
               </q-item>
@@ -59,6 +44,28 @@
                   ></q-select>
                 </q-item-section>
               </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    v-model="stockModel.price"
+                    label="KDV'siz Fiyat"
+                    ref="refPrice"
+                    type="number"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    v-model="priceWithTax"
+                    label="Kdv'li Fiyat"
+                    ref="refPrice"
+                    type="number"
+                  />
+                </q-item-section>
+              </q-item>
             </q-list>
           </q-card-section>
           <q-card-actions align="between">
@@ -83,7 +90,7 @@
 </template>
 <script>
 import { TaxValueAdded, Unit } from "src/util/constants";
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
 import { createStock, getStockItem, updateStock } from "src/api/stock.api";
@@ -114,7 +121,21 @@ export default defineComponent({
 
     let stockModel = ref({});
     let loading = ref(false);
-
+    let priceWithTax = computed({
+      get() {
+        if (stockModel.value.valueAddedTax === undefined) {
+          stockModel.value.valueAddedTax = TaxValueAdded.OnSekiz;
+        }
+        let price =
+          stockModel.value.price * (1 + stockModel.value.valueAddedTax / 100);
+        return convertDecimal(price);
+      },
+      set(value) {
+        stockModel.value.price = convertDecimal(
+          value / (1 + stockModel.value.valueAddedTax / 100)
+        );
+      },
+    });
     const getStock = (id) => {
       loading.value = true;
       getStockItem(id)
@@ -152,6 +173,14 @@ export default defineComponent({
     const btnGoBackList = () => {
       router.push({ name: "stock-list" });
     };
+    const convertDecimal = (value) => {
+      value = value.toString().replace(/,/g, ".");
+      if (!isNaN(value)) {
+        return Number.parseFloat(Number.parseFloat(value).toFixed(2));
+      }
+
+      return value;
+    };
     const refName = ref("");
     const refPrice = ref("");
     const refUnit = ref("");
@@ -185,6 +214,7 @@ export default defineComponent({
       refUnit,
       refValueAddedTax,
       loading,
+      priceWithTax,
     };
   },
 });

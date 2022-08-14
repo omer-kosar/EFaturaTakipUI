@@ -80,7 +80,7 @@
                 </q-item-section>
               </q-item>
 
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-select
                     dense
