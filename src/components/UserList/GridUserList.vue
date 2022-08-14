@@ -79,69 +79,15 @@
               class="q-gutter-y-sm"
             >
               <div class="row">
-                <div class="col-4 text-justify">
+                <div class="col-6 text-justify">
                   <q-badge color="orange"
-                    >Ticari Sicil No:
-                    {{ props.row.commercialRegistrationNumber }}</q-badge
+                    >Parola: {{ props.row.password }}</q-badge
                   >
                 </div>
-                <div class="col-4 text-justify">
-                  <q-badge color="orange"
-                    >Merkezi Kayıt No:{{
-                      props.row.centralRegistrationNumber
-                    }}</q-badge
-                  >
-                </div>
-
-                <div class="col-4 text-justify">
+                <div class="col-6 text-justify">
                   <q-badge color="orange">
                     Roller:{{ roleFormat(props.row.roles) }}</q-badge
                   >
-                </div>
-              </div>
-              <q-separator />
-              <div class="row">
-                <div class="col-4 text-justify">
-                  <q-badge color="blue"
-                    >Parola:{{ props.row.password }}</q-badge
-                  >
-                </div>
-
-                <div class="col-4 text-justify">
-                  <q-badge color="blue"
-                    >Servis Kullanıcı Adı:{{
-                      props.row.serviceUserName
-                    }}</q-badge
-                  >
-                </div>
-                <div class="col-4 text-justify">
-                  <q-badge color="blue"
-                    >Servis Kullanıcı Parola:{{
-                      props.row.serviceUserPassword
-                    }}</q-badge
-                  >
-                </div>
-              </div>
-              <q-separator />
-              <div class="row">
-                <div class="col-4 text-justify">
-                  <q-badge color="blue"
-                    >İl:{{ props.row.province }} - İlçe:{{
-                      props.row.district
-                    }}</q-badge
-                  >
-                </div>
-
-                <div class="col-4 text-justify">
-                  <q-badge color="blue"
-                    >Bina No:{{ props.row.apartmentNumber }} - Daire No:{{
-                      props.row.flatNumber
-                    }}</q-badge
-                  >
-                </div>
-
-                <div class="col-4 text-justify">
-                  <q-badge color="blue">Ülke:{{ props.row.country }}</q-badge>
                 </div>
               </div>
             </q-card-section>
@@ -199,7 +145,6 @@ const columns = [
     field: (row) => row.lastName,
     sortable: true,
   },
-
   {
     name: "lastLoginDate",
     required: true,

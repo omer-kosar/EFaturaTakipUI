@@ -9,6 +9,16 @@
   >
     <template v-slot:body="props">
       <q-tr :props="props">
+        <q-td auto-width>
+          <q-btn
+            size="sm"
+            color="accent"
+            round
+            dense
+            @click="props.row.expand = !props.row.expand"
+            :icon="props.row.expand ? 'remove' : 'add'"
+          />
+        </q-td>
         <q-td key="title" :props="props">
           <b>{{ props.row.title }}</b>
         </q-td>
@@ -19,14 +29,6 @@
 
         <q-td key="taxOffice" :props="props">
           <b>{{ props.row.taxOffice }}</b>
-        </q-td>
-
-        <q-td key="adress" :props="props">
-          <b>{{ props.row.adress }}</b>
-        </q-td>
-
-        <q-td key="provinceDistrict" :props="props">
-          <b>{{ props.row.province }} / {{ props.row.district }}</b>
         </q-td>
 
         <q-td key="mobilePhone" :props="props">
@@ -40,14 +42,6 @@
         <q-td key="eMailAdress" :props="props">
           <b>{{ props.row.eMailAdress }}</b>
         </q-td>
-
-        <q-td key="country" :props="props">
-          <b>{{ props.row.country }}</b>
-        </q-td>
-        <q-td key="apartmentNumberFlatNumber" :props="props">
-          <b>{{ props.row.apartmentNumber }} / {{ props.row.flatNumber }}</b>
-        </q-td>
-
         <q-td key="type" :props="props">
           <b>{{ props.row.typeDescription }} </b>
         </q-td>
@@ -81,12 +75,75 @@
           </q-btn>
         </q-td>
       </q-tr>
+      <q-tr v-show="props.row.expand" :props="props">
+        <q-td colspan="100%">
+          <q-card
+            class="col q-mt-sm"
+            :class="{ 'bg-grey-9 ': props.row.expand && $q.dark.isActive }"
+          >
+            <q-card-section
+              v-show="props.row.expand"
+              :props="props"
+              class="q-gutter-y-sm"
+            >
+              <div class="row">
+                <div class="col-4 text-justify">
+                  <q-badge color="blue"
+                    >İl/İlçe: {{ props.row.province }} /
+                    {{ props.row.district }}</q-badge
+                  >
+                </div>
+                <div class="col-4 text-justify">
+                  <q-badge color="blue"
+                    >Bina/Daire No: {{ props.row.apartmentNumber }} /
+                    {{ props.row.flatNumber }}</q-badge
+                  >
+                </div>
+
+                <div class="col-4 text-justify">
+                  <q-badge color="blue"> Ülke:{{ props.row.country }}</q-badge>
+                </div>
+              </div>
+              <q-separator />
+              <div class="row">
+                <div class="col-12 text-justify">
+                  Açık adres: {{ props.row.adress }}
+                </div>
+              </div>
+              <q-separator />
+              <div class="row">
+                <div class="col-3 text-justify">
+                  Mersis No: {{ props.row.centralRegistrationNumber }}
+                </div>
+
+                <div class="col-3 text-justify">
+                  Ticari Sicil No: {{ props.row.commercialRegistrationNumber }}
+                </div>
+                <div class="col-3 text-justify">
+                  Servis Kullanıcı Adı: {{ props.row.serviceUserName }}
+                </div>
+
+                <div class="col-3 text-justify">
+                  Servis Kullanıcı Parolası: {{ props.row.servicePassword }}
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-td>
+      </q-tr>
     </template>
   </q-table>
 </template>
 <script>
 import { defineComponent, computed } from "vue";
 const columns = [
+  {
+    name: "",
+    required: true,
+    label: "",
+    align: "left",
+    sortable: false,
+  },
   {
     name: "title",
     required: true,
@@ -115,22 +172,6 @@ const columns = [
   },
 
   {
-    name: "adress",
-    required: true,
-    label: "Adres",
-    align: "left",
-    field: (row) => row.adress,
-    sortable: true,
-  },
-
-  {
-    name: "provinceDistrict",
-    required: true,
-    label: "İl/İlçe",
-    align: "left",
-    sortable: true,
-  },
-  {
     name: "mobilePhone",
     required: true,
     label: "Cep Tel.",
@@ -154,23 +195,6 @@ const columns = [
     label: "EPosta",
     align: "left",
     field: (row) => row.eMailAdress,
-    sortable: true,
-  },
-
-  {
-    name: "country",
-    required: true,
-    label: "Ülke",
-    align: "left",
-    field: (row) => row.country,
-    sortable: true,
-  },
-
-  {
-    name: "apartmentNumberFlatNumber",
-    required: true,
-    label: "Bina/Daire No",
-    align: "left",
     sortable: true,
   },
 
