@@ -1,6 +1,11 @@
 <template>
   <q-page>
     <div class="q-pa-md">
+      <div class="row q-pb-sm justify-end">
+        <q-btn icon="add" color="green" @click="btnNewCompanyClick"
+          >Yeni Firma Kaydet</q-btn
+        >
+      </div>
       <component
         :is="$q.screen.lt.sm ? 'GridCompanyListMobile' : 'GridCompanyList'"
         :companyList="companyList"
@@ -72,6 +77,9 @@ export default defineComponent({
     const updateCompany = (company) => {
       router.push({ name: "save-company", params: { id: company.companyId } });
     };
+    const btnNewCompanyClick = () => {
+      router.push({ name: "save-company" });
+    };
     getCompanyList();
     return {
       companyList,
@@ -80,6 +88,7 @@ export default defineComponent({
       deleteWarningState,
       deleteCompany,
       updateCompany,
+      btnNewCompanyClick,
     };
   },
 });
@@ -87,7 +96,7 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .grid-height
-  height: calc(100vh - 110px)
+  height: calc(100vh - 130px)
   @media (min-width:360px) and (max-width:768px)
         height: calc(100vh - 450px)
   @media (max-width:360px)

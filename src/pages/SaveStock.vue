@@ -3,6 +3,11 @@
     <div class="row q-col-gutter-sm">
       <div class="col-lg-12 col-md-8 col-xs-12 col-sm-12">
         <q-card class="card-bg text-white">
+          <q-card-section>
+            <q-bar dark class="bg-primary text-white">
+              <div class="col text-weight-bold">Stok Kaydet</div>
+            </q-bar>
+          </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-list class="row">
               <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">

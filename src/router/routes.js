@@ -59,6 +59,7 @@ const routes = [
         path: "/companylist",
         component: () => import("pages/CompanyList.vue"),
         meta: { authorize: [Role.Admin] },
+        name: "company-list",
       },
     ],
   },

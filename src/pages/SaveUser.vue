@@ -3,6 +3,11 @@
     <div class="row q-col-gutter-sm">
       <div class="col-lg-12 col-md-8 col-xs-12 col-sm-12">
         <q-card class="card-bg text-white">
+          <q-card-section>
+            <q-bar dark class="bg-primary text-white">
+              <div class="col text-weight-bold">Kullanıcı Kaydet</div>
+            </q-bar>
+          </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-list class="row">
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -145,38 +150,38 @@ export default defineComponent({
     const router = useRouter();
 
     let userId = route.params.id;
-
-    let userModel = ref({
-      firstName: "test",
-      lastName: "test",
-      email: "a@a.com",
-      phone: "05324992232",
-      password: "1",
-      serviceUserName: "test",
-      servicePassword: "1",
-      userType: 1,
-      commercialRegistrationNumber: "123",
-      centralRegistrationNumber: "123",
-      province: "Ankara",
-      district: "Çankaya",
-      apartmentNumber: "123",
-      flatNumber: "123",
-      country: "Türkiye",
-      // roles: [
-      //   {
-      //     value: "c4b10318-d550-4f66-ae69-1097b7d9aa6a",
-      //     label: "Accountant",
-      //   },
-      //   {
-      //     value: "c8d61d2d-d08d-4d54-9d36-4dc9e50662c3",
-      //     label: "Admin",
-      //   },
-      //   {
-      //     value: "644bace0-ccfb-42e5-b221-66b0725bf8f1",
-      //     label: "TaxPayer",
-      //   },
-      // ],
-    });
+    let userModel = ref({});
+    // let userModel = ref({
+    //   firstName: "test",
+    //   lastName: "test",
+    //   email: "a@a.com",
+    //   phone: "05324992232",
+    //   password: "1",
+    //   serviceUserName: "test",
+    //   servicePassword: "1",
+    //   userType: 1,
+    //   commercialRegistrationNumber: "123",
+    //   centralRegistrationNumber: "123",
+    //   province: "Ankara",
+    //   district: "Çankaya",
+    //   apartmentNumber: "123",
+    //   flatNumber: "123",
+    //   country: "Türkiye",
+    //   // roles: [
+    //   //   {
+    //   //     value: "c4b10318-d550-4f66-ae69-1097b7d9aa6a",
+    //   //     label: "Accountant",
+    //   //   },
+    //   //   {
+    //   //     value: "c8d61d2d-d08d-4d54-9d36-4dc9e50662c3",
+    //   //     label: "Admin",
+    //   //   },
+    //   //   {
+    //   //     value: "644bace0-ccfb-42e5-b221-66b0725bf8f1",
+    //   //     label: "TaxPayer",
+    //   //   },
+    //   // ],
+    // });
     let loading = ref(false);
     let roleList = ref([]);
 
@@ -195,6 +200,7 @@ export default defineComponent({
       loading.value = true;
       getUserItem(id)
         .then((response) => {
+          console.warn("update model===", response.data);
           userModel.value = response.data;
         })
         .finally(() => {
@@ -207,7 +213,7 @@ export default defineComponent({
 
       // if (!validate()) return;
       if (userId) {
-        userModel.value.roles = userModel.value.roles.map((role) => role.value);
+        // userModel.value.roles = userModel.value.roles.map((role) => role.value);
         updateUser(userId, userModel.value)
           .then((response) => {
             success(response.data);

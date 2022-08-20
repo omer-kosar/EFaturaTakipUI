@@ -20,12 +20,12 @@
           />
         </q-td>
         <q-td key="title" :props="props">
-          <b>{{ props.row.title }}</b>
+          <b>{{ getTitle(props.row) }}</b>
         </q-td>
-
+        <!-- 
         <q-td key="tcknVkn" :props="props">
           <b>{{ props.row.tcknVkn }}</b>
-        </q-td>
+        </q-td> -->
 
         <q-td key="taxOffice" :props="props">
           <b>{{ props.row.taxOffice }}</b>
@@ -88,6 +88,20 @@
             >
               <div class="row">
                 <div class="col-4 text-justify">
+                  <q-badge color="orange"
+                    >T.C. Kimlik No: {{ props.row.tcKimlikNo }}</q-badge
+                  >
+                </div>
+
+                <div class="col-4 text-justify">
+                  <q-badge color="orange"
+                    >Vergi No: {{ props.row.vergiNo }}</q-badge
+                  >
+                </div>
+              </div>
+              <q-separator />
+              <div class="row">
+                <div class="col-4 text-justify">
                   <q-badge color="blue"
                     >İl/İlçe: {{ props.row.province }} /
                     {{ props.row.district }}</q-badge
@@ -135,6 +149,7 @@
   </q-table>
 </template>
 <script>
+import { CompanyType } from "src/util/constants";
 import { defineComponent, computed } from "vue";
 const columns = [
   {
@@ -149,18 +164,17 @@ const columns = [
     required: true,
     label: "Ad Soyad/Unvan",
     align: "left",
-    field: (row) => row.title,
     sortable: true,
   },
 
-  {
-    name: "tcknVkn",
-    required: true,
-    label: "TCKN/VKN",
-    align: "left",
-    field: (row) => row.tcknVkn,
-    sortable: true,
-  },
+  // {
+  //   name: "tcknVkn",
+  //   required: true,
+  //   label: "TCKN/VKN",
+  //   align: "left",
+  //   field: (row) => row.tcknVkn,
+  //   sortable: true,
+  // },
 
   {
     name: "taxOffice",
@@ -225,12 +239,18 @@ export default defineComponent({
       console.warn();
       emit("company-update", company);
     };
+    const getTitle = (row) => {
+      return row.type === CompanyType.Corporate
+        ? row.title
+        : `${row.firstName} ${row.lastName}`;
+    };
     return {
       companyList,
       loading,
       columns,
       btnDeleteClick,
       btnUpdateClick,
+      getTitle,
     };
   },
 });

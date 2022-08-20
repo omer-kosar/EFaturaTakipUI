@@ -27,69 +27,39 @@ import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
 const menu = [
   {
-    title: "Gelen EFaturalar",
-    icon: "receipt",
+    title: "Gelen Faturalar",
+    icon: "receipt_long",
     routeLink: "/inboxinvoicelist",
   },
   {
-    title: "Giden EFaturalar",
-    icon: "receipt",
-    routeLink: "/inboxinvoicelist",
+    title: "Kullanıcı Kaydet",
+    icon: "person_add",
+    routeLink: "/saveuser",
   },
   {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
+    title: "Kullanıcı Listesi",
+    icon: "view_list",
+    routeLink: "/userlist",
   },
   {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
+    title: "Firma Kaydet",
+    icon: "add_business",
+    routeLink: "savecompany",
   },
   {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
+    title: "Firma Listesi",
+    icon: "view_list",
+    routeLink: "companylist",
   },
   {
-    title: "Giden EFaturalar",
+    title: "Stok Kaydet",
     icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
+    routeLink: "savestock",
   },
   {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
-  },
-  {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
-  },
-  {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
-  },
-  {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
-  },
-  {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
-  },
-  {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
-  },
-  {
-    title: "Giden EFaturalar",
-    icon: "local_grocery_store",
-    routeLink: "inboxinvoicelist",
+    title: "Stok Listesi",
+    icon: "view_list",
+    routeLink: "stocklist",
   },
 ];
 const colors = [

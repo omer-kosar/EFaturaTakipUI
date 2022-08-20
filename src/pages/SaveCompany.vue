@@ -4,40 +4,13 @@
       <div class="col-lg-12 col-md-8 col-xs-12 col-sm-12">
         <q-card class="card-bg text-white">
           <q-card-section>
-            <div>Firma Kaydet</div>
+            <q-bar dark class="bg-primary text-white">
+              <div class="col text-weight-bold">Firma Kaydet</div>
+            </q-bar>
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-list class="row">
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-input
-                    dense
-                    v-model="companyModel.title"
-                    label="Ad Soyad/Unvan"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-input
-                    dense
-                    v-model="companyModel.tcknVkn"
-                    label="TCKN/VKN"
-                    mask="###########"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-input
-                    dense
-                    v-model="companyModel.taxOffice"
-                    label="Vergi Dairesi"
-                  />
-                </q-item-section>
-              </q-item>
-
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-select
                     v-model="companyModel.type"
@@ -52,14 +25,73 @@
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input dense v-model="companyModel.province" label="İl" />
+                  <q-input
+                    dense
+                    v-model="companyModel.vergiNo"
+                    label="Vergi No"
+                    mask="##########"
+                    @blur="getTitle"
+                    :loading="loadingCompanyTitle"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section v-show="!isCorporate">
+                  <q-input
+                    dense
+                    v-model="companyModel.tcKimlikNo"
+                    label="T.C. Kimlik No"
+                    mask="###########"
+                  />
+                </q-item-section>
+                <q-item-section v-show="isCorporate">
+                  <q-input dense v-model="companyModel.title" label="Unvan" />
+                </q-item-section>
+              </q-item>
+              <q-item
+                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                v-show="!isCorporate"
+              >
+                <q-item-section>
+                  <q-input dense v-model="companyModel.firstName" label="Ad" />
+                </q-item-section>
+              </q-item>
+
+              <q-item
+                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                v-show="!isCorporate"
+              >
+                <q-item-section>
+                  <q-input
+                    dense
+                    v-model="companyModel.lastName"
+                    label="Soyad"
+                  />
+                </q-item-section>
+              </q-item>
+
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    v-model="companyModel.taxOffice"
+                    label="Vergi Dairesi"
+                  />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
+                  <q-input dense v-model="companyModel.province" label="İl" />
+                </q-item-section>
+                <q-item-section>
                   <q-input dense v-model="companyModel.district" label="İlçe" />
                 </q-item-section>
               </q-item>
+              <!-- <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input dense v-model="companyModel.district" label="İlçe" />
+                </q-item-section>
+              </q-item> -->
 
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
@@ -70,8 +102,6 @@
                     mask="(####) ### - ####"
                   />
                 </q-item-section>
-              </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input
                     dense
@@ -81,6 +111,16 @@
                   />
                 </q-item-section>
               </q-item>
+              <!-- <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    v-model="companyModel.faxNumber"
+                    label="Fax Numarası"
+                    mask="(####) ### - ####"
+                  />
+                </q-item-section>
+              </q-item> -->
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input
@@ -89,11 +129,6 @@
                     label="E-Posta"
                     type="email"
                   />
-                </q-item-section>
-              </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-input dense v-model="companyModel.country" label="Ülke" />
                 </q-item-section>
               </q-item>
 
@@ -160,7 +195,7 @@
                   />
                 </q-item-section>
               </q-item>
-              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input
                     dense
@@ -170,9 +205,21 @@
                   />
                 </q-item-section>
               </q-item>
+              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input dense v-model="companyModel.country" label="Ülke" />
+                </q-item-section>
+              </q-item>
             </q-list>
           </q-card-section>
-          <q-card-actions align="right">
+          <q-card-actions align="between">
+            <q-btn
+              class="text-capitalize bg-info text-white q-mr-md"
+              @click="btnGoBackList"
+              color="orange"
+              >Listeye Dön</q-btn
+            >
+
             <q-btn
               class="text-capitalize bg-info text-white q-mr-md"
               @click="btnSaveClick"
@@ -189,24 +236,32 @@
 import {
   createCompany,
   getCompanyItem,
+  getCompanyTitle,
   updateCompany,
 } from "src/api/company.api";
 import { CompanyType } from "src/util/constants";
 import { success } from "src/util/notify";
-import { defineComponent, ref } from "vue";
-import { useRoute } from "vue-router";
+import { defineComponent, ref, computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const companyTypeOptions = [
-  { label: "Şahıs", value: CompanyType.Person },
+  { label: "Bireysel", value: CompanyType.Person },
   { label: "Tüzel", value: CompanyType.Corporate },
+  { label: "Şahıs Şirketi", value: CompanyType.SoleProprietorship },
 ];
 export default defineComponent({
   setup() {
     const route = useRoute();
+    const router = useRouter();
+
     let companyId = route.params.id;
 
-    let companyModel = ref({});
+    let companyModel = ref({ type: CompanyType.Person });
     let loading = ref(false);
+    let loadingCompanyTitle = ref(false);
+    let isCorporate = computed(() => {
+      return companyModel.value.type === CompanyType.Corporate;
+    });
 
     const getCompany = (id) => {
       loading.value = true;
@@ -239,6 +294,24 @@ export default defineComponent({
           loading.value = false;
         });
     };
+    const getTitle = () => {
+      if (
+        !companyModel.value.vergiNo ||
+        companyModel.value.type !== CompanyType.Corporate
+      )
+        return;
+      loadingCompanyTitle.value = true;
+      getCompanyTitle(companyModel.value.vergiNo)
+        .then((response) => {
+          companyModel.value.title = response.data;
+        })
+        .finally(() => {
+          loadingCompanyTitle.value = false;
+        });
+    };
+    const btnGoBackList = () => {
+      router.push({ name: "company-list" });
+    };
     if (companyId) {
       getCompany(companyId);
     }
@@ -247,6 +320,10 @@ export default defineComponent({
       companyTypeOptions,
       btnSaveClick,
       loading,
+      isCorporate,
+      getTitle,
+      loadingCompanyTitle,
+      btnGoBackList,
     };
   },
 });
