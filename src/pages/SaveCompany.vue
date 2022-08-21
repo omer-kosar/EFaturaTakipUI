@@ -23,7 +23,10 @@
                   ></q-select>
                 </q-item-section>
               </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item
+                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                v-show="!isPerson"
+              >
                 <q-item-section>
                   <q-input
                     dense
@@ -45,7 +48,11 @@
                   />
                 </q-item-section>
                 <q-item-section v-show="isCorporate">
-                  <q-input dense v-model="companyModel.title" label="Unvan" />
+                  <q-input
+                    dense
+                    v-model="companyModel.title"
+                    label="Firma Resmi Adı"
+                  />
                 </q-item-section>
               </q-item>
               <q-item
@@ -262,7 +269,9 @@ export default defineComponent({
     let isCorporate = computed(() => {
       return companyModel.value.type === CompanyType.Corporate;
     });
-
+    let isPerson = computed(
+      () => companyModel.value.type === CompanyType.Person
+    );
     const getCompany = (id) => {
       loading.value = true;
       getCompanyItem(id)
@@ -321,6 +330,7 @@ export default defineComponent({
       btnSaveClick,
       loading,
       isCorporate,
+      isPerson,
       getTitle,
       loadingCompanyTitle,
       btnGoBackList,

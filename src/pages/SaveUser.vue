@@ -110,6 +110,24 @@
                   </q-select>
                 </q-item-section>
               </q-item>
+              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-select
+                    v-model="userModel.companyId"
+                    :options="companyOptions"
+                    label="Firma"
+                    clear-icon="close"
+                    dense
+                    emit-value
+                    map-options
+                    input-debounce="3"
+                    use-input
+                    behavior="menu"
+                    @pop-show="showTopNCompanyList"
+                    @filter="filterCompany"
+                  ></q-select>
+                </q-item-section>
+              </q-item>
             </q-list>
           </q-card-section>
           <q-card-actions align="between">
@@ -133,6 +151,7 @@
   </q-page>
 </template>
 <script>
+import { search } from "src/api/company.api";
 import { getRoles } from "src/api/role.api";
 import { createUser, getUserItem, updateUser } from "src/api/user.api";
 import { userType } from "src/util/constants";
@@ -150,41 +169,36 @@ export default defineComponent({
     const router = useRouter();
 
     let userId = route.params.id;
-    let userModel = ref({});
-    // let userModel = ref({
-    //   firstName: "test",
-    //   lastName: "test",
-    //   email: "a@a.com",
-    //   phone: "05324992232",
-    //   password: "1",
-    //   serviceUserName: "test",
-    //   servicePassword: "1",
-    //   userType: 1,
-    //   commercialRegistrationNumber: "123",
-    //   centralRegistrationNumber: "123",
-    //   province: "Ankara",
-    //   district: "Çankaya",
-    //   apartmentNumber: "123",
-    //   flatNumber: "123",
-    //   country: "Türkiye",
-    //   // roles: [
-    //   //   {
-    //   //     value: "c4b10318-d550-4f66-ae69-1097b7d9aa6a",
-    //   //     label: "Accountant",
-    //   //   },
-    //   //   {
-    //   //     value: "c8d61d2d-d08d-4d54-9d36-4dc9e50662c3",
-    //   //     label: "Admin",
-    //   //   },
-    //   //   {
-    //   //     value: "644bace0-ccfb-42e5-b221-66b0725bf8f1",
-    //   //     label: "TaxPayer",
-    //   //   },
-    //   // ],
-    // });
+    // let userModel = ref({});
+    let userModel = ref({
+      firstName: "test",
+      lastName: "test",
+      email: "a@a.com",
+      phone: "05324992232",
+      password: "1",
+      companyId: "",
+      userType: 1,
+      rolse: [],
+      // roles: [
+      //   {
+      //     value: "c4b10318-d550-4f66-ae69-1097b7d9aa6a",
+      //     label: "Accountant",
+      //   },
+      //   {
+      //     value: "c8d61d2d-d08d-4d54-9d36-4dc9e50662c3",
+      //     label: "Admin",
+      //   },
+      //   {
+      //     value: "644bace0-ccfb-42e5-b221-66b0725bf8f1",
+      //     label: "TaxPayer",
+      //   },
+      // ],
+    });
     let loading = ref(false);
+    let loadingFilterCompany = ref(false);
     let roleList = ref([]);
-
+    let companyOptions = ref([]);
+    let filteredCompanyList = [];
     const getRoleList = () => {
       if (roleList.value.length > 0) return;
       getRoles().then((response) => {
@@ -200,18 +214,20 @@ export default defineComponent({
       loading.value = true;
       getUserItem(id)
         .then((response) => {
-          console.warn("update model===", response.data);
           userModel.value = response.data;
+          userModel.value.companyId = companyOptions.value.find(
+            (item) => item.value === userModel.value.companyId
+          );
         })
         .finally(() => {
           loading.value = false;
         });
     };
     const btnSaveClick = () => {
-      loading.value = true;
-      console.warn("kullanıcı model====", userModel.value);
-
       // if (!validate()) return;
+      console.warn(userModel.value);
+
+      loading.value = true;
       if (userId) {
         // userModel.value.roles = userModel.value.roles.map((role) => role.value);
         updateUser(userId, userModel.value)
@@ -234,17 +250,57 @@ export default defineComponent({
     const btnGoBackList = () => {
       router.push({ name: "user-list" });
     };
+    const showTopNCompanyList = () => {
+      loadingFilterCompany.value = true;
+      if (filteredCompanyList.length > 0) return;
+      search("")
+        .then((response) => {
+          filteredCompanyList = response.data.map((companyItem) => {
+            return { label: companyItem.name, value: companyItem.id };
+          });
+          companyOptions.value = filteredCompanyList;
+          console.warn("top 20 list", response.data);
+        })
+        .finally(() => {
+          loadingFilterCompany.value = false;
+        });
+    };
+    // const showTopNCompanyList = () => {
+    //   companyOptions.value = filteredCompanyList;
+    // };
+    const filterCompany = (val, update) => {
+      loadingFilterCompany.value = true;
+      search(val)
+        .then((response) => {
+          update(() => {
+            companyOptions.value = response?.data.map((companyItem) => {
+              return { label: companyItem.name, value: companyItem.id };
+            });
+            filteredCompanyList = companyOptions.value;
+          });
+        })
+        .finally(() => {
+          loadingFilterCompany.value = false;
+        });
+    };
+
+    getRoleList();
+    showTopNCompanyList();
     if (userId) {
       getUser(userId);
     }
-    getRoleList();
+
     return {
       userTypeOptions,
       userModel,
       loading,
+      loadingFilterCompany,
       roleList,
       btnSaveClick,
       btnGoBackList,
+      companyOptions,
+      showTopNCompanyList,
+      filterCompany,
     };
   },
 });

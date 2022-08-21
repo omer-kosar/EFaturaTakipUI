@@ -9,6 +9,12 @@ const companyDelete = (id) => api.delete(`Companies/delete/${id}`);
 const getCompanyItem = (id) => api.get(`Companies/${id}`);
 const getCompanyTitle = (vergiNo) =>
   api.get(`Companies/getCompanyTitle?vergiNo=${vergiNo}`);
+const search = (name, count) => {
+  if (count)
+    return api.get(`Companies/searchcompany?name=${name}&count=${count}`);
+  return api.get(`Companies/searchcompany?name=${name}`);
+};
+
 export {
   createCompany,
   getList,
@@ -16,4 +22,5 @@ export {
   getCompanyItem,
   updateCompany,
   getCompanyTitle,
+  search,
 };
