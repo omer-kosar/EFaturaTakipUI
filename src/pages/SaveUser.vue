@@ -125,6 +125,7 @@
                     behavior="menu"
                     @pop-show="showTopNCompanyList"
                     @filter="filterCompany"
+                    :loading="loadingFilterCompany"
                   ></q-select>
                 </q-item-section>
               </q-item>
@@ -229,7 +230,6 @@ export default defineComponent({
 
       loading.value = true;
       if (userId) {
-        // userModel.value.roles = userModel.value.roles.map((role) => role.value);
         updateUser(userId, userModel.value)
           .then((response) => {
             success(response.data);
@@ -265,9 +265,7 @@ export default defineComponent({
           loadingFilterCompany.value = false;
         });
     };
-    // const showTopNCompanyList = () => {
-    //   companyOptions.value = filteredCompanyList;
-    // };
+
     const filterCompany = (val, update) => {
       loadingFilterCompany.value = true;
       search(val)
