@@ -90,6 +90,14 @@ const routes = [
         path: "/accessdenied",
         component: () => import("pages/AccessDenied.vue"),
       },
+      {
+        path: "/changepassword",
+        component: () => import("pages/ChangePassword.vue"),
+        meta: {
+          permissions: [userType.admin, userType.taxPayer, userType.accountant],
+        },
+        name: "change-password",
+      },
     ],
   },
   { path: "/login", name: "login", component: () => import("pages/Login.vue") },

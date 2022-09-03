@@ -10,13 +10,12 @@
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-list class="row">
-              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+              <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input
                     dense
                     v-model="stockModel.name"
                     label="Stok Adı"
-                    :rules="[rulesName]"
                     ref="refName"
                   />
                 </q-item-section>
@@ -35,7 +34,19 @@
                   ></q-select>
                 </q-item-section>
               </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+
+              <q-item class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <q-item-section>
+                  <q-input
+                    dense
+                    v-model="stockModel.price"
+                    label="KDV'siz Fiyat"
+                    ref="refPrice"
+                    type="number"
+                  />
+                </q-item-section>
+              </q-item>
+              <q-item class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-select
                     v-model="stockModel.valueAddedTax"
@@ -49,18 +60,7 @@
                   ></q-select>
                 </q-item-section>
               </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-input
-                    dense
-                    v-model="stockModel.price"
-                    label="KDV'siz Fiyat"
-                    ref="refPrice"
-                    type="number"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-input
                     dense

@@ -90,9 +90,9 @@ export default defineComponent({
       refPassword.value.validate();
       if (refPhone.value.hasError || refPassword.value.hasError) return;
       loading.value = true;
-      console.warn("login model===", loginModel.value);
       login(loginModel.value)
         .then((response) => {
+          console.warn("user model===", response.data);
           saveItemToStorage("user", response.data);
           store.dispatch("user/setUser", response.data);
           router.push("/");

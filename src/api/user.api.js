@@ -13,6 +13,9 @@ const changeFinancialAdvisor = (advisorId, companyId) =>
   api.get(
     `user/changeFinancialAdvisor?advisorId=${advisorId}&companyId=${companyId}`
   );
+const changeUserPassword = (passwordModel) => {
+  return api.post("user/changepassword", { ...passwordModel });
+};
 export {
   createUser,
   getList,
@@ -21,4 +24,5 @@ export {
   userDelete,
   searchFinancialAdvisor,
   changeFinancialAdvisor,
+  changeUserPassword,
 };

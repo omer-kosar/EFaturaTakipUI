@@ -15,6 +15,7 @@ const hasUserPermission = (pageAllowedPermissions, user) => {
 };
 export default boot(({ app, router }) => {
   router.beforeEach((to, from, next) => {
+    debugger;
     let isPageRequiredAuthentication = to.matched.some(
       (route) => route.meta.permissions
     );

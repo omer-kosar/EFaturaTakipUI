@@ -39,6 +39,15 @@
             }}</q-item-label>
           </q-item-section>
         </q-item>
+        <q-item clickable @click="changePassword">
+          <q-item-section avatar>
+            <q-icon name="manage_accounts" />
+          </q-item-section>
+
+          <q-item-section>
+            <q-item-label>Şifre Değiştir</q-item-label>
+          </q-item-section>
+        </q-item>
         <q-item clickable @click="logOutClick">
           <q-item-section avatar>
             <q-icon name="logout" />
@@ -106,6 +115,9 @@ export default defineComponent({
       if (type === userType.accountant) return finiancialadvisorMenu;
       return [];
     };
+    const changePassword = () => {
+      router.push("/changepassword");
+    };
     menuList.value = getMenu();
     return {
       menuList,
@@ -116,6 +128,7 @@ export default defineComponent({
       },
       userName,
       logOutClick,
+      changePassword,
     };
   },
 });
