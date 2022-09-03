@@ -156,6 +156,7 @@ export default defineComponent({
       );
     };
     getInvoiceList();
+
     return {
       searchText,
       inboxInvoiceList,

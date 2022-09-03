@@ -77,7 +77,10 @@
                 </q-item-section>
               </q-item>
 
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item
+                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                v-show="!isPerson"
+              >
                 <q-item-section>
                   <q-input
                     dense
@@ -158,7 +161,10 @@
                   />
                 </q-item-section>
               </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item
+                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                v-show="currentUserIsAdmin"
+              >
                 <q-item-section>
                   <q-input
                     dense
@@ -169,7 +175,10 @@
                   />
                 </q-item-section>
               </q-item>
-              <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+              <q-item
+                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
+                v-show="currentUserIsAdmin"
+              >
                 <q-item-section>
                   <q-input
                     dense
@@ -250,6 +259,7 @@ import { CompanyType } from "src/util/constants";
 import { success } from "src/util/notify";
 import { defineComponent, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useStore } from "vuex";
 
 const companyTypeOptions = [
   { label: "Bireysel", value: CompanyType.Person },
@@ -260,6 +270,7 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const router = useRouter();
+    const store = useStore();
 
     let companyId = route.params.id;
 
@@ -272,6 +283,8 @@ export default defineComponent({
     let isPerson = computed(
       () => companyModel.value.type === CompanyType.Person
     );
+
+    let currentUserIsAdmin = computed(() => store.getters["user/userIsAdmin"]);
     const getCompany = (id) => {
       loading.value = true;
       getCompanyItem(id)
@@ -319,7 +332,8 @@ export default defineComponent({
         });
     };
     const btnGoBackList = () => {
-      router.push({ name: "company-list" });
+      if (currentUserIsAdmin) router.push({ name: "company-list" });
+      else router.push({ name: "customer-list" });
     };
     if (companyId) {
       getCompany(companyId);
@@ -334,6 +348,7 @@ export default defineComponent({
       getTitle,
       loadingCompanyTitle,
       btnGoBackList,
+      currentUserIsAdmin,
     };
   },
 });

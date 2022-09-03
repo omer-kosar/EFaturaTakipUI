@@ -177,7 +177,7 @@ export default defineComponent({
       email: "a@a.com",
       phone: "05324992232",
       password: "1",
-      companyId: "",
+      // companyId: "",
       userType: 1,
       rolse: [],
       // roles: [

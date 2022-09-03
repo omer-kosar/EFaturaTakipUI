@@ -5,6 +5,7 @@ const updateCompany = (companyId, company) =>
   api.put(`Companies/${companyId}`, company);
 
 const getList = () => api.get("Companies/getList");
+const getCustomerList = () => api.get("Companies/getcustomerlist");
 const companyDelete = (id) => api.delete(`Companies/delete/${id}`);
 const getCompanyItem = (id) => api.get(`Companies/${id}`);
 const getCompanyTitle = (vergiNo) =>
@@ -23,4 +24,5 @@ export {
   updateCompany,
   getCompanyTitle,
   search,
+  getCustomerList,
 };

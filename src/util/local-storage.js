@@ -9,4 +9,9 @@ const getItemFromStorage = (itemName) => {
   // if (LocalStorage.has(itemName))
   // return {};
 };
-export { saveItemToStorage, getItemFromStorage };
+const removeItemFromStorage = (name) => {
+  if (LocalStorage.has(name)) {
+    LocalStorage.remove(name);
+  }
+};
+export { saveItemToStorage, getItemFromStorage, removeItemFromStorage };

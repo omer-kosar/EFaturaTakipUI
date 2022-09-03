@@ -90,7 +90,7 @@ export default defineComponent({
       refPassword.value.validate();
       if (refPhone.value.hasError || refPassword.value.hasError) return;
       loading.value = true;
-
+      console.warn("login model===", loginModel.value);
       login(loginModel.value)
         .then((response) => {
           saveItemToStorage("user", response.data);

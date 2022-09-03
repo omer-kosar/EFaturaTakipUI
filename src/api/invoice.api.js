@@ -10,10 +10,16 @@ const declineInboxInvoices = (invoiceIdList) =>
 
 const sendInvoiceEMail = (invoiceEMail) =>
   api.post(`invoices/sendMail/${invoiceEMail.invoiceId}`, invoiceEMail);
+const getInboxInvoiceListByCompanyId = (
+  companyId,
+  pageIndex = 0,
+  pageSize = 5
+) => api.get(`invoices/getInboxInvoiceListByCompanyId/${companyId}`);
 
 export {
   getInboxInvoiceList,
   approveInboxInvoices,
   declineInboxInvoices,
   sendInvoiceEMail,
+  getInboxInvoiceListByCompanyId,
 };

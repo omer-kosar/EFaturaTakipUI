@@ -10,22 +10,23 @@ const isUserExist = () => {
   if (!token || !user) return false;
   return true;
 };
-const hasUserPermission = (pageAllowedRoles, userRoles) => {
-  return true;
+const hasUserPermission = (pageAllowedPermissions, user) => {
+  return pageAllowedPermissions.some((userType) => userType === user.type);
 };
 export default boot(({ app, router }) => {
   router.beforeEach((to, from, next) => {
     let isPageRequiredAuthentication = to.matched.some(
-      (route) => route.meta.authorize
+      (route) => route.meta.permissions
     );
     if (isPageRequiredAuthentication) {
-      if (!isUserExist()) {
+      let user = getItemFromStorage("user");
+      if (!isUserExist() && to.name != "login") {
         next("/login");
-        return;
+        return false;
       }
-      if (!hasUserPermission([], [])) {
+      if (!hasUserPermission(to.meta.permissions, user)) {
         next("/accessdenied");
-        return;
+        return false;
       }
     }
     next();

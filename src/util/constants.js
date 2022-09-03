@@ -26,4 +26,105 @@ const mapUserType = new Map([
   [userType.accountant, "Muhasebeci"],
 ]);
 
-export { userType, mapUserType, TaxValueAdded, Unit, CompanyType };
+const companyMenu = [
+  {
+    title: "Gelen Faturalar",
+    icon: "receipt_long",
+    routeLink: "/inboxinvoicelist",
+  },
+  {
+    title: "Giden Faturalar",
+    icon: "receipt_long",
+    routeLink: "/outboxinvoicelist",
+  },
+
+  {
+    title: "Firma Kaydet",
+    icon: "add_business",
+    routeLink: "/savecompany",
+  },
+  {
+    title: "Firma Listesi",
+    icon: "view_list",
+    routeLink: "/customerlist",
+  },
+  {
+    title: "Stok Kaydet",
+    icon: "local_grocery_store",
+    routeLink: "/savestock",
+  },
+  {
+    title: "Stok Listesi",
+    icon: "view_list",
+    routeLink: "/stocklist",
+  },
+];
+const adminMenu = [
+  {
+    title: "Gelen Faturalar",
+    icon: "receipt_long",
+    routeLink: "/financialadvisorinboxinvoicelist",
+  },
+
+  {
+    title: "Giden Faturalar",
+    icon: "receipt_long",
+    routeLink: "/outboxinvoicelist",
+  },
+  {
+    title: "Kullanıcı Kaydet",
+    icon: "person_add",
+    routeLink: "/saveuser",
+  },
+  {
+    title: "Kullanıcı Listesi",
+    icon: "view_list",
+    routeLink: "/userlist",
+  },
+  {
+    title: "Firma Kaydet",
+    icon: "add_business",
+    routeLink: "/savecompany",
+  },
+  {
+    title: "Firma Listesi",
+    icon: "view_list",
+    routeLink: "/companylist",
+  },
+  {
+    title: "Firma Müşavir Eşleştir",
+    icon: "swap_horiz",
+    routeLink: "/finiancialadvisor",
+  },
+];
+const finiancialadvisorMenu = [
+  {
+    title: "Gelen Faturalar",
+    icon: "receipt_long",
+    routeLink: "/financialadvisorinboxinvoicelist",
+  },
+
+  {
+    title: "Giden Faturalar",
+    icon: "receipt_long",
+    routeLink: "/outboxinvoicelist",
+  },
+];
+const guessMenu = [
+  {
+    title: "Giriş Yap",
+    icon: "login",
+    routeLink: "/login",
+  },
+];
+export {
+  userType,
+  mapUserType,
+  TaxValueAdded,
+  Unit,
+  CompanyType,
+  companyMenu,
+  adminMenu,
+  finiancialadvisorMenu,
+  guessMenu,
+};

@@ -1,4 +1,5 @@
 import { Role } from "src/constants/user/role";
+import { userType } from "src/util/constants";
 
 const routes = [
   {
@@ -8,63 +9,90 @@ const routes = [
       {
         path: "",
         component: () => import("pages/Index.vue"),
-        meta: { authorize: [Role.Admin] },
+        // meta: { authorize: [] },
       },
       {
         path: "/saveUser/:id?",
         component: () => import("pages/SaveUser.vue"),
         name: "save-user",
-        meta: { authorize: [Role.Admin] },
+        meta: { permissions: [userType.admin] },
       },
       {
         path: "/userlist",
         component: () => import("pages/UserList.vue"),
-        meta: { authorize: [Role.Admin] },
+        meta: { permissions: [userType.admin] },
         name: "user-list",
       },
       {
         path: "/inboxinvoicelist",
         component: () => import("pages/InboxInvoiceList.vue"),
-        meta: { authorize: [Role.Admin] },
+        meta: { permissions: [userType.taxPayer] },
+      },
+
+      {
+        path: "/financialadvisorinboxinvoicelist",
+        component: () => import("pages/InboxInvoiceListForAdvisor.vue"),
+        meta: {
+          permissions: [userType.admin, userType.accountant],
+        },
       },
 
       {
         path: "/showInvoice",
         component: () => import("pages/ShowInvoice.vue"),
-        meta: { authorize: [Role.Admin] },
+        // meta: { authorize: [] },
       },
 
       {
         path: "/saveStock/:id?",
         component: () => import("pages/SaveStock.vue"),
         name: "save-stock",
-        meta: { authorize: [Role.Admin] },
+        meta: { permissions: [userType.taxPayer] },
       },
 
       {
         path: "/saveCompany/:id?",
         component: () => import("pages/SaveCompany.vue"),
         name: "save-company",
-        meta: { authorize: [Role.Admin] },
+        meta: {
+          permissions: [userType.admin, userType.taxPayer],
+        },
       },
 
       {
         path: "/stocklist",
         component: () => import("pages/StockList.vue"),
-        meta: { authorize: [Role.Admin] },
+        meta: { permissions: [userType.taxPayer] },
         name: "stock-list",
       },
 
       {
         path: "/companylist",
         component: () => import("pages/CompanyList.vue"),
-        meta: { authorize: [Role.Admin] },
+        meta: { permissions: [userType.admin] },
         name: "company-list",
+      },
+
+      {
+        path: "/customerlist",
+        component: () => import("pages/CustomerList.vue"),
+        meta: { permissions: [userType.taxPayer] },
+        name: "customer-list",
+      },
+
+      {
+        path: "/finiancialadvisor",
+        component: () => import("pages/MatchCompanyAndAdvisor.vue"),
+        meta: { permissions: [userType.admin] },
+        name: "match-company-advisor",
+      },
+      {
+        path: "/accessdenied",
+        component: () => import("pages/AccessDenied.vue"),
       },
     ],
   },
-  { path: "/login", component: () => import("pages/Login.vue") },
-  { path: "/accessdenied", component: () => import("pages/AccessDenied.vue") },
+  { path: "/login", name: "login", component: () => import("pages/Login.vue") },
 
   // Always leave this as last one,
   // but you can also remove it

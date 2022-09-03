@@ -62,16 +62,18 @@ import { useQuasar } from "quasar";
 import Menu from "components/Menu.vue";
 import { defineComponent, ref } from "vue";
 import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 
-import { saveItemToStorage } from "src/util/local-storage";
-
-const adminMenuList = [
-  {
-    title: "Kullanıcılar",
-    icon: "person",
-    link: "/userlist",
-  },
-];
+import {
+  removeItemFromStorage,
+  saveItemToStorage,
+} from "src/util/local-storage";
+import {
+  adminMenu,
+  companyMenu,
+  finiancialadvisorMenu,
+  userType,
+} from "src/util/constants";
 
 export default defineComponent({
   name: "MainLayout",
@@ -82,22 +84,38 @@ export default defineComponent({
 
   setup() {
     const store = useStore();
+    const router = useRouter();
 
+    let menuList = ref([]);
     const $q = useQuasar();
     const leftDrawerOpen = ref(false);
+    let type = store.getters["user/getUserType"];
+
     const modClick = () => {
       $q.dark.toggle();
       saveItemToStorage("darkMode", $q.dark.isActive);
     };
     let userName = store.getters["user/getUserName"];
+    const logOutClick = () => {
+      removeItemFromStorage("user");
+      router.push("/login");
+    };
+    const getMenu = () => {
+      if (type === userType.admin) return adminMenu;
+      if (type === userType.taxPayer) return companyMenu;
+      if (type === userType.accountant) return finiancialadvisorMenu;
+      return [];
+    };
+    menuList.value = getMenu();
     return {
-      menuList: adminMenuList,
+      menuList,
       leftDrawerOpen,
       modClick,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
       userName,
+      logOutClick,
     };
   },
 });

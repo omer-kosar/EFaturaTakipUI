@@ -2,7 +2,7 @@
   <q-page>
     <div class="row">
       <div
-        v-for="(menuItem, index) in menu"
+        v-for="(menuItem, index) in getMenu()"
         :key="index"
         class="column col-xs-6 col-sm-4 q-pa-xs menu-item cursor-pointer"
         @click="menuClick(menuItem)"
@@ -23,45 +23,16 @@
 </template>
 
 <script>
+import {
+  adminMenu,
+  companyMenu,
+  finiancialadvisorMenu,
+  userType,
+} from "src/util/constants";
 import { defineComponent } from "vue";
 import { useRouter } from "vue-router";
-const menu = [
-  {
-    title: "Gelen Faturalar",
-    icon: "receipt_long",
-    routeLink: "/inboxinvoicelist",
-  },
-  {
-    title: "Kullanıcı Kaydet",
-    icon: "person_add",
-    routeLink: "/saveuser",
-  },
-  {
-    title: "Kullanıcı Listesi",
-    icon: "view_list",
-    routeLink: "/userlist",
-  },
-  {
-    title: "Firma Kaydet",
-    icon: "add_business",
-    routeLink: "savecompany",
-  },
-  {
-    title: "Firma Listesi",
-    icon: "view_list",
-    routeLink: "companylist",
-  },
-  {
-    title: "Stok Kaydet",
-    icon: "local_grocery_store",
-    routeLink: "savestock",
-  },
-  {
-    title: "Stok Listesi",
-    icon: "view_list",
-    routeLink: "stocklist",
-  },
-];
+import { useStore } from "vuex";
+
 const colors = [
   "negative",
   "teal",
@@ -76,14 +47,23 @@ export default defineComponent({
   name: "PageIndex",
   setup() {
     const router = useRouter();
+    const store = useStore();
+
     const menuClick = (menuItem) => {
       router.push(menuItem.routeLink);
     };
 
+    let type = store.getters["user/getUserType"];
+    const getMenu = () => {
+      if (type === userType.admin) return adminMenu;
+      if (type === userType.taxPayer) return companyMenu;
+      if (type === userType.accountant) return finiancialadvisorMenu;
+      return [];
+    };
     return {
-      menu,
       colors,
       menuClick,
+      getMenu,
     };
   },
 });

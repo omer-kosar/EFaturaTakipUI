@@ -32,10 +32,16 @@ api.interceptors.response.use(
       handleValidationError(error.response.data);
       return Promise.reject(error);
     }
-    if (error.response.status === 401) {
+    if (error.response.status === 403) {
       window.location.href = "#/accessdenied";
-      return;
+      return Promise.reject(error);
     }
+
+    if (error.response.status === 401) {
+      window.location.href = "#/login";
+      return Promise.reject(error);
+    }
+
     handleError(error);
     return Promise.reject(error);
   }
