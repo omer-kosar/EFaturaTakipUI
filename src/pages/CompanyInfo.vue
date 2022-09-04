@@ -5,7 +5,7 @@
         <q-card class="card-bg text-white">
           <q-card-section>
             <q-bar dark class="bg-primary text-white">
-              <div class="col text-weight-bold">Firma Kaydet</div>
+              <div class="col text-weight-bold">Firma Bilgileri</div>
             </q-bar>
           </q-card-section>
           <q-card-section class="q-pa-sm">
@@ -20,6 +20,7 @@
                     dense
                     emit-value
                     map-options
+                    disable
                   ></q-select>
                 </q-item-section>
               </q-item>
@@ -34,6 +35,7 @@
                     label="Vergi No"
                     mask="##########"
                     @blur="getTitle"
+                    disable
                     :loading="loadingCompanyTitle"
                   />
                 </q-item-section>
@@ -44,12 +46,14 @@
                     dense
                     v-model="companyModel.tcKimlikNo"
                     label="T.C. Kimlik No"
+                    disable
                     mask="###########"
                   />
                 </q-item-section>
                 <q-item-section v-show="isCorporate">
                   <q-input
                     dense
+                    disable
                     v-model="companyModel.title"
                     label="Firma Resmi Adı"
                   />
@@ -60,7 +64,12 @@
                 v-show="!isCorporate"
               >
                 <q-item-section>
-                  <q-input dense v-model="companyModel.firstName" label="Ad" />
+                  <q-input
+                    dense
+                    v-model="companyModel.firstName"
+                    label="Ad"
+                    disable
+                  />
                 </q-item-section>
               </q-item>
 
@@ -73,6 +82,7 @@
                     dense
                     v-model="companyModel.lastName"
                     label="Soyad"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -86,15 +96,26 @@
                     dense
                     v-model="companyModel.taxOffice"
                     label="Vergi Dairesi"
+                    disable
                   />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input dense v-model="companyModel.province" label="İl" />
+                  <q-input
+                    dense
+                    v-model="companyModel.province"
+                    label="İl"
+                    disable
+                  />
                 </q-item-section>
                 <q-item-section>
-                  <q-input dense v-model="companyModel.district" label="İlçe" />
+                  <q-input
+                    dense
+                    v-model="companyModel.district"
+                    label="İlçe"
+                    disable
+                  />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
@@ -104,6 +125,7 @@
                     v-model="companyModel.mobilePhone"
                     label="Cep Telefonu"
                     mask="(####) ### - ####"
+                    disable
                   />
                 </q-item-section>
                 <q-item-section>
@@ -112,6 +134,7 @@
                     v-model="companyModel.faxNumber"
                     label="Fax Numarası"
                     mask="(####) ### - ####"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -122,6 +145,7 @@
                     v-model="companyModel.eMailAdress"
                     label="E-Posta"
                     type="email"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -132,6 +156,7 @@
                     dense
                     v-model="companyModel.apartmentNumber"
                     label="Bina No"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -142,34 +167,7 @@
                     dense
                     v-model="companyModel.flatNumber"
                     label="Daire No"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item
-                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-                v-show="currentUserIsAdmin"
-              >
-                <q-item-section>
-                  <q-input
-                    dense
-                    clearable
-                    clear-icon="close"
-                    v-model="companyModel.serviceUserName"
-                    label="Servis Kullanıcı Adı"
-                  />
-                </q-item-section>
-              </q-item>
-              <q-item
-                class="col-lg-6 col-md-6 col-sm-12 col-xs-12"
-                v-show="currentUserIsAdmin"
-              >
-                <q-item-section>
-                  <q-input
-                    dense
-                    clearable
-                    clear-icon="close"
-                    v-model="companyModel.servicePassword"
-                    label="Servis Kullanıcı Parolası"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -181,6 +179,7 @@
                     clear-icon="close"
                     v-model="companyModel.commercialRegistrationNumber"
                     label="Ticari Sicil No"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -192,6 +191,7 @@
                     clear-icon="close"
                     v-model="companyModel.centralRegistrationNumber"
                     label="MERSİS No"
+                    disable
                   />
                 </q-item-section>
               </q-item>
@@ -202,12 +202,18 @@
                     v-model="companyModel.adress"
                     label="Adres"
                     autogrow
+                    disable
                   />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input dense v-model="companyModel.country" label="Ülke" />
+                  <q-input
+                    dense
+                    v-model="companyModel.country"
+                    label="Ülke"
+                    disable
+                  />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -222,9 +228,9 @@
 
             <q-btn
               class="text-capitalize bg-info text-white q-mr-md"
-              @click="btnSaveClick"
+              @click="btnHomeClick"
               :loading="loading"
-              >Kaydet</q-btn
+              >Anasayfa</q-btn
             >
           </q-card-actions>
         </q-card>
@@ -233,14 +239,8 @@
   </q-page>
 </template>
 <script>
-import {
-  createCompany,
-  getCompanyItem,
-  getCompanyTitle,
-  updateCompany,
-} from "src/api/company.api";
+import { getCompanyItem } from "src/api/company.api";
 import { CompanyType } from "src/util/constants";
-import { success } from "src/util/notify";
 import { defineComponent, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
@@ -252,11 +252,10 @@ const companyTypeOptions = [
 ];
 export default defineComponent({
   setup() {
-    const route = useRoute();
     const router = useRouter();
     const store = useStore();
 
-    let companyId = route.params.id;
+    let companyId = store.getters["user/getCompanyId"];
 
     let companyModel = ref({ type: CompanyType.Person });
     let loading = ref(false);
@@ -279,57 +278,22 @@ export default defineComponent({
           loading.value = false;
         });
     };
-    const btnSaveClick = () => {
-      loading.value = true;
-      // if (!validate()) return;
-      if (companyId) {
-        updateCompany(companyId, companyModel.value)
-          .then((response) => {
-            success(response.data);
-          })
-          .finally(() => {
-            loading.value = false;
-          });
-        return;
-      }
-      createCompany(companyModel.value)
-        .then((response) => {
-          success(response.data);
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    };
-    const getTitle = () => {
-      if (
-        !companyModel.value.vergiNo ||
-        companyModel.value.type !== CompanyType.Corporate
-      )
-        return;
-      loadingCompanyTitle.value = true;
-      getCompanyTitle(companyModel.value.vergiNo)
-        .then((response) => {
-          companyModel.value.title = response.data;
-        })
-        .finally(() => {
-          loadingCompanyTitle.value = false;
-        });
+    const btnHomeClick = () => {
+      router.push("/");
     };
     const btnGoBackList = () => {
-      if (currentUserIsAdmin) router.push({ name: "company-list" });
-      else router.push({ name: "customer-list" });
+      router.push({ name: "customer-list" });
     };
-    if (companyId) {
-      getCompany(companyId);
-    }
+
+    getCompany(companyId);
+
     return {
       companyModel,
       companyTypeOptions,
-      btnSaveClick,
+      btnHomeClick,
       loading,
       isCorporate,
       isPerson,
-      getTitle,
       loadingCompanyTitle,
       btnGoBackList,
       currentUserIsAdmin,

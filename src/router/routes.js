@@ -98,6 +98,14 @@ const routes = [
         },
         name: "change-password",
       },
+      {
+        path: "/companyinfo",
+        component: () => import("pages/CompanyInfo.vue"),
+        meta: {
+          permissions: [userType.admin, userType.taxPayer, userType.accountant],
+        },
+        name: "company-info",
+      },
     ],
   },
   { path: "/login", name: "login", component: () => import("pages/Login.vue") },

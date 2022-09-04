@@ -58,6 +58,11 @@ const companyMenu = [
     icon: "view_list",
     routeLink: "/stocklist",
   },
+  {
+    title: "Firma Bilgileri",
+    icon: "info",
+    routeLink: "/companyinfo",
+  },
 ];
 const adminMenu = [
   {
