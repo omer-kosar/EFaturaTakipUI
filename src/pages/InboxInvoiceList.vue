@@ -149,9 +149,9 @@ export default defineComponent({
       dialogSendEMailState.value = true;
     };
     const showInvoice = (invoice) => {
-      let userId = store.getters["user/getUserId"];
+      let userCompanyId = store.getters["user/getCompanyId"];
       window.open(
-        `https://localhost:7106/api/Invoices/ShowInvoice/${invoice.eFaturaId}/${userId}`,
+        `${process.env.baseUrl}/Invoices/ShowInvoice/${invoice.eFaturaId}/${userCompanyId}`,
         "_blank"
       );
     };

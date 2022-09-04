@@ -168,6 +168,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "kdv",
+    required: true,
+    label: "KDV",
+    align: "left",
+    sortable: true,
+  },
+  {
     name: "total",
     required: true,
     label: "GENEL TOPLAM",

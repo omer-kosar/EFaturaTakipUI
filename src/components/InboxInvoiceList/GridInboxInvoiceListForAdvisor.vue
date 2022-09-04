@@ -8,14 +8,9 @@
     hide-pagination
     v-model:pagination="pagination"
     :loading="loading"
-    selection="single"
-    v-model:selected="selected"
   >
     <template v-slot:body="props">
       <q-tr :props="props">
-        <q-td>
-          <q-checkbox v-model="props.row.selected" color="primary" />
-        </q-td>
         <q-td key="invoiceNo" :props="props" class="text-center">
           <span class="text-weight-bold">{{ props.row.eFaturaNo }}</span>
           <br />
@@ -85,22 +80,6 @@
           >
             <q-menu>
               <q-list style="min-width: 120px">
-                <q-separator />
-                <q-item clickable v-close-popup @click="approve()">
-                  <q-item-section avatar>
-                    <q-icon name="task"></q-icon>
-                  </q-item-section>
-                  <q-item-section>Onayla</q-item-section>
-                </q-item>
-                <q-separator />
-                <q-item clickable v-close-popup @click="decline(props.row)">
-                  <q-item-section avatar>
-                    <q-icon name="block"></q-icon>
-                  </q-item-section>
-                  <q-item-section>Reddet</q-item-section>
-                </q-item>
-                <q-separator />
-
                 <q-item clickable v-close-popup @click="showInvoice(props.row)">
                   <q-item-section avatar>
                     <q-icon name="visibility"></q-icon>
@@ -108,13 +87,6 @@
                   <q-item-section>Göster</q-item-section>
                 </q-item>
                 <q-separator />
-
-                <q-item clickable v-close-popup @click="sendEMail(props.row)">
-                  <q-item-section avatar>
-                    <q-icon name="email"></q-icon>
-                  </q-item-section>
-                  <q-item-section>Mail At</q-item-section>
-                </q-item>
               </q-list>
             </q-menu>
           </q-btn>
@@ -127,7 +99,7 @@
   </q-table>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, computed, ref } from "vue";
 import { date } from "quasar";
 
 const columns = [
@@ -168,6 +140,13 @@ const columns = [
     sortable: true,
   },
   {
+    name: "kdv",
+    required: true,
+    label: "KDV",
+    align: "left",
+    sortable: true,
+  },
+  {
     name: "total",
     required: true,
     label: "GENEL TOPLAM",
@@ -184,6 +163,34 @@ const columns = [
   },
 ];
 export default defineComponent({
-  setup() {},
+  props: ["inboxInvoiceList", "loading", "pagination", "filter"],
+
+  setup(props, { emit }) {
+    let inboxInvoiceList = computed(() => {
+      return props.inboxInvoiceList;
+    });
+    const pagination = computed(() => props.pagination);
+    const loading = computed(() => props.loading);
+    const filter = computed(() => props.filter);
+    const selected = ref([]);
+    const formatDate = (val) => {
+      return date.formatDate(val, "DD.MM.YYYY HH:mm:ss");
+    };
+
+    const showInvoice = (invoice) => {
+      emit("show-invoice", invoice);
+    };
+
+    return {
+      inboxInvoiceList,
+      loading,
+      columns,
+      formatDate,
+      pagination,
+      filter,
+      selected,
+      showInvoice,
+    };
+  },
 });
 </script>

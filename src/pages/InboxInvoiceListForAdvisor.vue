@@ -37,17 +37,14 @@
       <component
         :is="
           $q.screen.lt.sm
-            ? 'GridInboxInvioceListMobile'
-            : 'GridInboxInvoiceList'
+            ? 'GridInboxInvoiceListForAdvisorMobile'
+            : 'GridInboxInvoiceListForAdvisor'
         "
         :inboxInvoiceList="inboxInvoiceList"
         :loading="loading"
         :pagination="pagination"
         :filter="searchText"
-        @approve="approve"
-        @decline="decline"
         @show-invoice="showInvoice"
-        @send-email="sendEMail"
       ></component>
       <div class="row justify-center q-mt-md">
         <q-pagination
@@ -65,18 +62,19 @@
 <script>
 import { defineComponent, ref, computed } from "vue";
 import { useQuasar } from "quasar";
-import { useStore } from "vuex";
 
-import GridInboxInvoiceList from "src/components/InboxInvoiceList/GridInboxInvoiceList.vue";
-import GridInboxInvoiceListMobile from "src/components/InboxInvoiceList/GridInboxInvioceListMobile.vue";
+import GridInboxInvoiceListForAdvisor from "src/components/InboxInvoiceList/GridInboxInvoiceListForAdvisor.vue";
+import GridInboxInvoiceListForAdvisorMobile from "src/components/InboxInvoiceList/GridInboxInvoiceListForAdvisorMobile.vue";
 import { search } from "src/api/company.api";
 import { getInboxInvoiceListByCompanyId } from "src/api/invoice.api";
 
 export default defineComponent({
-  components: { GridInboxInvoiceList, GridInboxInvoiceListMobile },
+  components: {
+    GridInboxInvoiceListForAdvisor,
+    GridInboxInvoiceListForAdvisorMobile,
+  },
   setup() {
     const $q = useQuasar();
-    const store = useStore();
     let inboxInvoiceList = ref([]);
     let companyOptions = ref([]);
     let filteredCompanyList = [];
@@ -130,6 +128,12 @@ export default defineComponent({
           loading.value = false;
         });
     };
+    const showInvoice = (invoice) => {
+      window.open(
+        `${process.env.baseUrl}/Invoices/ShowInvoice/${invoice.eFaturaId}/${companyId.value}`,
+        "_blank"
+      );
+    };
     return {
       inboxInvoiceList,
       loading,
@@ -144,6 +148,7 @@ export default defineComponent({
       filterCompany,
       showTopNCompanyList,
       getInboxInvoiceList,
+      showInvoice,
     };
   },
 });

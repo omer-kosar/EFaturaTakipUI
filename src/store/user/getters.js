@@ -11,6 +11,9 @@ export function getUserName(state) {
 export function getUserId(state) {
   return state.activeUser.id;
 }
+export function getCompanyId(state) {
+  return state.activeUser.companyId;
+}
 
 export function userIsAdmin(state) {
   return state.activeUser.type === userType.admin;
