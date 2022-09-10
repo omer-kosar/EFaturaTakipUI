@@ -40,7 +40,7 @@
             ? 'GridInboxInvoiceListForAdvisorMobile'
             : 'GridInboxInvoiceListForAdvisor'
         "
-        :inboxInvoiceList="inboxInvoiceList"
+        :inboxInvoiceList="filteredList"
         :loading="loading"
         :pagination="pagination"
         :filter="searchText"
@@ -118,6 +118,7 @@ export default defineComponent({
     const getInboxInvoiceList = () => {
       loading.value = true;
       pagination.value.page = 1;
+      searchText.value = "";
       getInboxInvoiceListByCompanyId(companyId.value)
         .then((response) => {
           inboxInvoiceList.value = response.data.map((invoice) => {
@@ -134,8 +135,23 @@ export default defineComponent({
         "_blank"
       );
     };
+    const filteredList = computed(() => {
+      if (searchText.value !== "" && searchText.value) {
+        return inboxInvoiceList.value.filter((item) => {
+          console.warn(item.targetTitle);
+          let filterText = searchText.value.toLocaleUpperCase("tr-TR");
+          return (
+            item.targetTitle.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.targetTcknVkn.includes(filterText) ||
+            item.eFaturaNo.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.eFaturaId.toLocaleUpperCase("tr-TR").includes(filterText)
+          );
+        });
+      }
+      return inboxInvoiceList.value;
+    });
     return {
-      inboxInvoiceList,
+      filteredList,
       loading,
       searchText,
       pagination,
@@ -143,7 +159,7 @@ export default defineComponent({
       companyId,
       loadingFilterCompany,
       pagesNumber: computed(() =>
-        Math.ceil(inboxInvoiceList.value.length / pagination.value.rowsPerPage)
+        Math.ceil(filteredList.value.length / pagination.value.rowsPerPage)
       ),
       filterCompany,
       showTopNCompanyList,

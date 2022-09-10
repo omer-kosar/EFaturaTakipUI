@@ -2,7 +2,6 @@
   <q-table
     :rows="inboxInvoiceList"
     :columns="columns"
-    :filter="filter"
     class="grid-height"
     wrap-cells="true"
     hide-pagination

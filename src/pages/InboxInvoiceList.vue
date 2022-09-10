@@ -31,10 +31,9 @@
             ? 'GridInboxInvioceListMobile'
             : 'GridInboxInvoiceList'
         "
-        :inboxInvoiceList="inboxInvoiceList"
+        :inboxInvoiceList="filteredList"
         :loading="loading"
         :pagination="pagination"
-        :filter="searchText"
         @approve="approve"
         @decline="decline"
         @show-invoice="showInvoice"
@@ -155,15 +154,28 @@ export default defineComponent({
         "_blank"
       );
     };
+    const filteredList = computed(() => {
+      alert(2);
+      console.warn("searchText*************", searchText.value);
+      if (searchText.value !== "" && searchText.value) {
+        return inboxInvoiceList.value.filter((item) => {
+          console.warn(item.targetTitle);
+          return item.targetTitle
+            .toUpperCase()
+            .includes(searchText.value.toUpperCase());
+        });
+      }
+      return inboxInvoiceList.value;
+    });
     getInvoiceList();
 
     return {
       searchText,
-      inboxInvoiceList,
+      filteredList,
       loading,
       pagination,
       pagesNumber: computed(() =>
-        Math.ceil(inboxInvoiceList.value.length / pagination.value.rowsPerPage)
+        Math.ceil(filteredList.value.length / pagination.value.rowsPerPage)
       ),
       btnRefresh,
       approve,
