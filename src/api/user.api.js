@@ -9,10 +9,6 @@ const getUserItem = (id) => api.get(`user/${id}`);
 const userDelete = (id) => api.delete(`user/delete/${id}`);
 const searchFinancialAdvisor = (name) =>
   api.get(`user/searchfinancialadvisor?name=${name}`);
-const changeFinancialAdvisor = (advisorId, companyId) =>
-  api.get(
-    `user/changeFinancialAdvisor?advisorId=${advisorId}&companyId=${companyId}`
-  );
 const changeUserPassword = (passwordModel) => {
   return api.post("user/changepassword", { ...passwordModel });
 };
@@ -23,6 +19,5 @@ export {
   getUserItem,
   userDelete,
   searchFinancialAdvisor,
-  changeFinancialAdvisor,
   changeUserPassword,
 };

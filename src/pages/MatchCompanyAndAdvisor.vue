@@ -18,32 +18,29 @@
           :loading="loadingFilterFinancialAdvisor"
           option-value="id"
           option-label="name"
-          @update:model-value="matchCompanyWitAdvisor"
+          @update:model-value="getCompanyList"
         ></q-select>
       </div>
       <div class="col-lg-2 col-md-8 col-xs-12 col-sm-12">
-        <q-btn icon="list" color="green" class="full-width full-height"
-          >Firma Listesi</q-btn
+        <q-btn
+          icon="add"
+          color="green"
+          class="full-width full-height"
+          @click="addCompanyClick"
+          >Firma Ekle / Çıkar</q-btn
         >
       </div>
     </div>
     <div class="row q-col-gutter-sm">
       <div class="col-lg-12 col-md-8 col-xs-12 col-sm-12">
-        <q-input
-          dense
-          v-model="companyFilter"
-          label="Firma Adı"
-          debounce="3"
-          @update:model-value="filterCompany"
-        />
+        <q-input dense v-model="companySearch" label="Firma Adı" debounce="3" />
       </div>
     </div>
     <div class="row q-col-gutter-sm q-mt-xs">
       <div
-        v-for="(companyItem, index) in companyList"
+        v-for="(companyItem, index) in filteredCompanyList"
         :key="index"
         class="column col-xs-6 col-sm-4 cursor-pointer"
-        @click="companyClick(companyItem)"
       >
         <q-card
           class="card-pointer text-center full-height text-white bg-blue"
@@ -54,24 +51,38 @@
             ><q-icon name="store" size="md"></q-icon>
             <div class="text-weight-medium">{{ companyItem.name }}</div>
           </q-card-section>
-          <q-inner-loading :showing="companyItem.loading">
-            <q-spinner-gears size="50px" color="primary" />
-          </q-inner-loading>
+        </q-card>
+      </div>
+      <div
+        class="column col-xs-6 col-sm-4 cursor-pointer"
+        v-show="filteredCompanyList.length === 0"
+      >
+        <q-card
+          class="card-pointer text-center full-height text-white bg-red"
+          square
+        >
+          <q-card-section
+            ><q-icon name="warning" size="md"></q-icon>
+            <div class="text-weight-medium">Kayıt bulunamadı</div>
+          </q-card-section>
         </q-card>
       </div>
     </div>
+    <dialog-change-advisor-companies-vue
+      :dialogState="dialogState"
+      :financialAdvisorId="financialAdvisorId"
+      @dialog-change-advisor-companies-close="closeDialog"
+    ></dialog-change-advisor-companies-vue>
   </q-page>
 </template>
 <script>
-import { search } from "src/api/company.api";
-import {
-  changeFinancialAdvisor,
-  searchFinancialAdvisor,
-} from "src/api/user.api";
+import { getAdvisorCompanies } from "src/api/company.api";
+import { searchFinancialAdvisor } from "src/api/user.api";
 import { warning } from "src/util/notify";
-import { defineComponent, ref } from "vue";
-
+import { defineComponent, ref, computed } from "vue";
+import DialogChangeAdvisorCompaniesVue from "src/components/Company/DialogChangeAdvisorCompanies.vue";
 export default defineComponent({
+  components: { DialogChangeAdvisorCompaniesVue },
   setup() {
     let financialAdvisorId = ref("");
     let financialAdvisorOptions = ref([]);
@@ -79,8 +90,19 @@ export default defineComponent({
     let filteredFinancialAdvisorList = [];
     let loadingFilterFinancialAdvisor = ref(false);
     let loadingCompany = ref(false);
-    let changeAdvisorLoading = ref(false);
-    let companyFilter = ref("");
+    let companySearch = ref("");
+    let dialogState = ref(false);
+    const filteredCompanyList = computed(() => {
+      if (companySearch.value !== "" && companySearch.value) {
+        return companyList.value.filter((item) => {
+          return item.name
+            .toUpperCase()
+            .includes(companySearch.value.toUpperCase());
+        });
+      }
+      return companyList.value;
+    });
+
     const showTopNFinancialAdvisorList = () => {
       loadingFilterFinancialAdvisor.value = true;
       if (filteredFinancialAdvisorList.length > 0) return;
@@ -106,98 +128,41 @@ export default defineComponent({
           loadingFilterFinancialAdvisor.value = false;
         });
     };
-    const filterCompany = () => {
+
+    const getCompanyList = () => {
       loadingCompany.value = true;
-      search(companyFilter.value)
+      getAdvisorCompanies(financialAdvisorId.value)
         .then((response) => {
           companyList.value = response.data;
-          matchCompanyWitAdvisor();
         })
         .finally(() => {
           loadingCompany.value = false;
         });
     };
-    const showTopNCompanyList = () => {
-      loadingCompany.value = true;
-      search("")
-        .then((response) => {
-          companyList.value = response.data?.map((companyItem) => {
-            return {
-              id: companyItem.id,
-              name: companyItem.name,
-              color: "blue",
-              loading: false,
-            };
-          });
-        })
-        .finally(() => {
-          loadingCompany.value = false;
-        });
-    };
-    const companyClick = (company) => {
+    showTopNFinancialAdvisorList();
+    const addCompanyClick = () => {
       if (!financialAdvisorId.value) {
         warning("Mali müşavir seçiniz.");
         return;
       }
-      changeFinancialAdvisor(financialAdvisorId.value, company.id)
-        .then(() => {
-          let advisor = financialAdvisorOptions.value.find(
-            (item) => item.id === financialAdvisorId.value
-          );
-          let isExistCompany = isUnMatching(advisor, company.id);
-          if (isExistCompany) {
-            company.color = "blue";
-            advisor.companies = advisor.companies.filter(
-              (advisorCompanyId) => advisorCompanyId != company.id
-            );
-          } else {
-            company.color = "orange";
-            advisor.companies.push(company.id);
-          }
-        })
-        .finally(() => {
-          company.loading = false;
-        });
+      dialogState.value = true;
     };
-    const isCompanyFinancialAdvisorMatched = (company) => {
-      var isAdvisorMatchedCompany = financialAdvisorOptions.value.some(
-        (advisor) =>
-          advisor.companies.some((companyId) => companyId == company.id)
-      );
-      if (isAdvisorMatchedCompany) company.color = "orange";
+    const closeDialog = () => {
+      dialogState.value = false;
+      getCompanyList();
     };
-    const matchCompanyWitAdvisor = () => {
-      if (!financialAdvisorId.value) {
-        return;
-      }
-      let advisor = financialAdvisorOptions.value.find(
-        (item) => item.id === financialAdvisorId.value
-      );
-      if (!advisor) return;
-      companyList.value.forEach((company) => {
-        if (advisor.companies.some((companyId) => companyId == company.id)) {
-          company.color = "orange";
-        } else {
-          company.color = "blue";
-        }
-      });
-    };
-    const isUnMatching = (advisor, companyId) => {
-      return advisor.companies.includes(companyId);
-    };
-    showTopNFinancialAdvisorList();
-    showTopNCompanyList();
     return {
       financialAdvisorOptions,
       loadingFilterFinancialAdvisor,
       filterFinancialAdvisor,
-      companyFilter,
+      companySearch,
       companyList,
-      companyClick,
-      filterCompany,
-      isCompanyFinancialAdvisorMatched,
       financialAdvisorId,
-      matchCompanyWitAdvisor,
+      getCompanyList,
+      filteredCompanyList,
+      addCompanyClick,
+      dialogState,
+      closeDialog,
     };
   },
 });
