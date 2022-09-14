@@ -31,7 +31,7 @@ const routes = [
 
       {
         path: "/financialadvisorinboxinvoicelist",
-        component: () => import("pages/InboxInvoiceListForAdvisor.vue"),
+        component: () => import("src/pages/InboxInvoiceListByCompanies.vue"),
         meta: {
           permissions: [userType.admin, userType.accountant],
         },
