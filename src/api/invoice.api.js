@@ -13,11 +13,18 @@ const sendInvoiceEMail = (invoiceEMail) =>
 const getInboxInvoiceListByCompanyId = (
   companyId,
   pageIndex = 0,
-  pageSize = 10
-) =>
-  api.get(
-    `invoices/getInboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`
-  );
+  pageSize = 10,
+  baslangicTarihi,
+  bitisTarihi
+) => {
+  let request = `invoices/getInboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  if (baslangicTarihi)
+    request = `${request}&baslangicTarihi=${baslangicTarihi}`;
+  if (bitisTarihi) {
+    request = `${request}&bitisTarihi=${bitisTarihi}`;
+  }
+  return api.get(request);
+};
 
 export {
   getInboxInvoiceList,

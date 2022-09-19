@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-xs">
     <div class="row q-mt-xs">
-      <div class="col-md-12 col-xs-12">
+      <div class="col-md-6 col-xs-12 q-pa-xs">
         <q-select
           v-model="companyId"
           :options="companyOptions"
@@ -18,10 +18,52 @@
           :loading="loadingFilterCompany"
           option-value="id"
           option-label="name"
-          @update:model-value="getInboxInvoiceList"
         ></q-select>
       </div>
-      <div class="col-md-12 col-xs-12 q-mt-xs">
+      <div class="col-md-3 col-xs-6 q-pa-xs">
+        <q-input square dense label="Başlangıç Tarihi" v-model="baslangicTarih">
+          <template v-slot:append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy
+                ref="qDateProxy"
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date today-btn v-model="baslangicTarih" mask="DD.MM.YYYY">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Kapat" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+
+      <div class="col-md-3 col-xs-6 q-pa-xs">
+        <q-input square dense v-model="bitisTarih" label="Bitiş Tarihi">
+          <template v-slot:append>
+            <q-icon name="event" class="cursor-pointer">
+              <q-popup-proxy
+                ref="qDateProxy"
+                transition-show="scale"
+                transition-hide="scale"
+              >
+                <q-date today-btn v-model="bitisTarih" mask="DD.MM.YYYY">
+                  <div class="row items-center justify-end">
+                    <q-btn v-close-popup label="Kapat" color="primary" flat />
+                  </div>
+                </q-date>
+              </q-popup-proxy>
+            </q-icon>
+          </template>
+        </q-input>
+      </div>
+
+      <div
+        class="col-sm-9 col-xs-12 q-mt-xs q-pa-xs"
+        :class="{ 'order-last': $q.screen.lt.sm }"
+      >
         <q-input
           square
           dense
@@ -32,6 +74,18 @@
           clear-icon="close"
         />
       </div>
+      <div class="col-sm-3 col-xs-12 column justify-center q-pa-sm">
+        <q-btn
+          dense
+          class="full-width full-height"
+          icon="search"
+          color="blue"
+          size="md"
+          :loading="loading"
+          @click="clickGetir"
+          >Getir</q-btn
+        >
+      </div>
     </div>
     <div class="q-mt-sm">
       <q-table
@@ -40,15 +94,13 @@
         :columns="columnsInvoice"
         class="grid-height"
         :wrap-cells="true"
-        :loading="loading"
+        :loading="invoiceLoading"
         binary-state-sort
         ref="refInvoiceList"
         row-key="eFaturaId"
         v-model:pagination="pagination"
         @request="onRequest"
         :rows-per-page-options="rowsOptions"
-        :no-data-label="noDataMessage"
-        rows-per-page-label="Kayıt Sayısı"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -153,16 +205,14 @@
         :rows="filteredList"
         :columns="columnsInvoiceMobile"
         class="grid-height"
-        :wrap-cells="true"
-        :loading="loading"
+        :loading="invoiceLoading"
         binary-state-sort
         ref="refInvoiceList"
         row-key="eFaturaId"
         v-model:pagination="pagination"
         @request="onRequest"
         :rows-per-page-options="rowsOptions"
-        :no-data-label="noDataMessage"
-        rows-per-page-label="Kayıt Sayısı"
+        :wrap-cells="true"
       >
         <template v-slot:body="props">
           <q-tr :props="props">
@@ -289,13 +339,13 @@
 <script>
 import { defineComponent, ref, computed } from "vue";
 import { useQuasar } from "quasar";
-
 import GridInboxInvoiceListForAdvisor from "src/components/InboxInvoiceList/GridInboxInvoiceListForAdvisor.vue";
 import GridInboxInvoiceListForAdvisorMobile from "src/components/InboxInvoiceList/GridInboxInvoiceListForAdvisorMobile.vue";
 import { search } from "src/api/company.api";
 import { getInboxInvoiceListByCompanyId } from "src/api/invoice.api";
 import { columnsInvoice, columnsInvoiceMobile } from "src/util/invoice-columns";
 import { date } from "quasar";
+import { warning } from "src/util/notify";
 
 export default defineComponent({
   components: {
@@ -310,10 +360,13 @@ export default defineComponent({
     let loadingFilterCompany = ref(false);
 
     let loading = ref(false);
+    let invoiceLoading = ref(false);
     let searchText = ref("");
     let companyId = ref("");
+    let baslangicTarih = ref("");
+    let bitisTarih = ref("");
     const rowsOptions = [5, 10, 25, 50, 100, 1000];
-    const noDataMessage = "Kayıt bulunamadı!";
+
     const pagination = ref({
       sortBy: "desc",
       descending: true,
@@ -346,14 +399,19 @@ export default defineComponent({
           loadingFilterCompany.value = false;
         });
     };
-    const getInboxInvoiceList = () => {
-      loading.value = true;
-      searchText.value = "";
-      getInvoiceList();
-    };
+
     const getInvoiceList = (page = 0, rowsPerPage = 10) => {
       if (page > 0) page = page - 1;
-      getInboxInvoiceListByCompanyId(companyId.value, page, rowsPerPage)
+      let baslangicTarihi = date.formatDate(baslangicTarih.value, "DD.MM.YYYY");
+      let bitisTarihi = date.formatDate(bitisTarih.value, "DD.MM.YYYY");
+      invoiceLoading.value = true;
+      getInboxInvoiceListByCompanyId(
+        companyId.value,
+        page,
+        rowsPerPage,
+        baslangicTarihi,
+        bitisTarihi
+      )
         .then((response) => {
           inboxInvoiceList.value = response.data.faturalar.map((invoice) => {
             return { selected: false, ...invoice };
@@ -364,6 +422,7 @@ export default defineComponent({
         })
         .finally(() => {
           loading.value = false;
+          invoiceLoading.value = false;
         });
     };
     const showInvoice = (invoice) => {
@@ -392,6 +451,14 @@ export default defineComponent({
     const onRequest = (props) => {
       getInvoiceList(props.pagination.page, props.pagination.rowsPerPage);
     };
+    const clickGetir = () => {
+      if (!companyId.value) {
+        warning("Firma seçiniz!");
+        return;
+      }
+      loading.value = true;
+      getInvoiceList();
+    };
     return {
       filteredList,
       loading,
@@ -404,12 +471,14 @@ export default defineComponent({
       columnsInvoiceMobile,
       filterCompany,
       showTopNCompanyList,
-      getInboxInvoiceList,
       showInvoice,
       formatDate,
       onRequest,
       rowsOptions,
-      noDataMessage,
+      baslangicTarih,
+      bitisTarih,
+      clickGetir,
+      invoiceLoading,
     };
   },
 });
@@ -418,7 +487,7 @@ export default defineComponent({
 .grid-height
   height: calc(100vh - 210px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 170px)
+        height: calc(100vh - 275px)
   @media (max-width:360px)
-        height: calc(100vh - 190px)
+        height: calc(100vh - 275px)
 </style>
