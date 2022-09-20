@@ -10,13 +10,9 @@
       </q-bar>
       <q-card-section>
         <di class="row q-mt-md">
-          <div class="col-3">
-            <div>EMail Adresi</div>
-          </div>
-          <div class="col-9">
+          <div class="col-12">
             <q-input
               square
-              outlined
               dense
               clearable
               clear-icon="close"

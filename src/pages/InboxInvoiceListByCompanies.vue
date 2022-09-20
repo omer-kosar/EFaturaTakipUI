@@ -79,7 +79,6 @@
           dense
           class="full-width full-height"
           icon="search"
-          color="blue"
           size="md"
           :loading="loading"
           @click="clickGetir"

@@ -77,4 +77,65 @@ const columnsInvoiceMobile = [
   },
 ];
 
-export { columnsInvoice, columnsInvoiceMobile };
+const columnsInboxInvoice = [
+  { name: "select" },
+  {
+    name: "invoiceNo",
+    required: true,
+    label: "FAT. NO/FAT. ID",
+    align: "left",
+    field: (row) => row.eFaturaNo,
+    sortable: true,
+  },
+  {
+    name: "targetVknTckn",
+    required: true,
+    label: "GÖNDEREN VKN-TCKN/UNVAN",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "scenario",
+    required: true,
+    label: "SENARYO/TÜRÜ",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "status",
+    required: true,
+    label: "DURUMU",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "date",
+    required: true,
+    label: "DÜZ. TARİHİ",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "kdv",
+    required: true,
+    label: "KDV",
+    align: "left",
+    sortable: true,
+  },
+  {
+    name: "total",
+    required: true,
+    label: "GENEL TOPLAM",
+    align: "left",
+    sortable: true,
+  },
+
+  {
+    name: "actions",
+    required: true,
+    label: "",
+    align: "left",
+    sortable: false,
+  },
+];
+export { columnsInvoice, columnsInvoiceMobile, columnsInboxInvoice };

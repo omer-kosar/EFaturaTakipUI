@@ -1,6 +1,18 @@
 import { api } from "boot/axios";
-const getInboxInvoiceList = (pageIndex = 0, pageSize = 5) =>
-  api.get("invoices/inboxInvoiceList");
+const getInboxInvoiceList = (
+  pageIndex = 0,
+  pageSize = 10,
+  baslangicTarihi,
+  bitisTarihi
+) => {
+  let request = `invoices/inboxInvoiceList?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  if (baslangicTarihi)
+    request = `${request}&baslangicTarihi=${baslangicTarihi}`;
+  if (bitisTarihi) {
+    request = `${request}&bitisTarihi=${bitisTarihi}`;
+  }
+  return api.get(request);
+};
 
 const approveInboxInvoices = (invoiceIdList) =>
   api.post("invoices/approveInboxInvoices", invoiceIdList);
