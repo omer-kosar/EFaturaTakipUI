@@ -42,13 +42,13 @@
   </q-dialog>
 </template>
 <script>
-import { sendInvoiceEMail } from "src/api/invoice.api";
+import { sendInvoiceEMail, sendOutBoxInvoiceEMail } from "src/api/invoice.api";
 import { success } from "src/util/notify";
 import { defineComponent, computed, ref } from "vue";
 import { useStore } from "vuex";
 
 export default defineComponent({
-  props: ["dialogState", "invoice"],
+  props: ["dialogState", "invoice", "isInboxInvoice"],
   setup(props, { emit }) {
     const store = useStore();
 
@@ -75,6 +75,10 @@ export default defineComponent({
       loading.value = true;
       invoiceEMailmodel.value.emailAdress =
         invoiceEMailmodel.value.emailAdress.trim();
+      if (props.isInboxInvoice) sendInboxInvoiceEMail();
+      if (!props.isInboxInvoice) sendOutboxInvoiceEMail();
+    };
+    const sendInboxInvoiceEMail = () => {
       sendInvoiceEMail(invoiceEMailmodel.value)
         .then((response) => {
           success(response.data);
@@ -83,6 +87,17 @@ export default defineComponent({
           loading.value = false;
         });
     };
+
+    const sendOutboxInvoiceEMail = () => {
+      sendOutBoxInvoiceEMail(invoiceEMailmodel.value)
+        .then((response) => {
+          success(response.data);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
+
     return {
       dialogState,
       invoice,

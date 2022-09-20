@@ -13,6 +13,20 @@ const getInboxInvoiceList = (
   }
   return api.get(request);
 };
+const getOutboxInvoiceList = (
+  pageIndex = 0,
+  pageSize = 10,
+  baslangicTarihi,
+  bitisTarihi
+) => {
+  let request = `invoices/outBoxInvoiceList?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  if (baslangicTarihi)
+    request = `${request}&baslangicTarihi=${baslangicTarihi}`;
+  if (bitisTarihi) {
+    request = `${request}&bitisTarihi=${bitisTarihi}`;
+  }
+  return api.get(request);
+};
 
 const approveInboxInvoices = (invoiceIdList) =>
   api.post("invoices/approveInboxInvoices", invoiceIdList);
@@ -22,6 +36,13 @@ const declineInboxInvoices = (invoiceIdList) =>
 
 const sendInvoiceEMail = (invoiceEMail) =>
   api.post(`invoices/sendMail/${invoiceEMail.invoiceId}`, invoiceEMail);
+
+const sendOutBoxInvoiceEMail = (invoiceEMail) =>
+  api.post(
+    `invoices/SendOutBoxInvoiceMail/${invoiceEMail.invoiceId}`,
+    invoiceEMail
+  );
+
 const getInboxInvoiceListByCompanyId = (
   companyId,
   pageIndex = 0,
@@ -40,8 +61,10 @@ const getInboxInvoiceListByCompanyId = (
 
 export {
   getInboxInvoiceList,
+  getOutboxInvoiceList,
   approveInboxInvoices,
   declineInboxInvoices,
   sendInvoiceEMail,
+  sendOutBoxInvoiceEMail,
   getInboxInvoiceListByCompanyId,
 };

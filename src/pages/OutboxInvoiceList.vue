@@ -1,26 +1,7 @@
 <template>
   <q-page class="q-pa-xs">
     <div class="row q-mt-xs">
-      <div class="col-md-6 col-xs-12 q-pa-xs">
-        <q-select
-          v-model="companyId"
-          :options="companyOptions"
-          label="Firma"
-          clear-icon="close"
-          dense
-          emit-value
-          map-options
-          input-debounce="3"
-          use-input
-          behavior="menu"
-          @pop-show="showTopNCompanyList"
-          @filter="filterCompany"
-          :loading="loadingFilterCompany"
-          option-value="id"
-          option-label="name"
-        ></q-select>
-      </div>
-      <div class="col-md-3 col-xs-6 q-pa-xs">
+      <div class="col-md-5 col-xs-6 q-pa-xs">
         <q-input square dense label="Başlangıç Tarihi" v-model="baslangicTarih">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
@@ -40,7 +21,7 @@
         </q-input>
       </div>
 
-      <div class="col-md-3 col-xs-6 q-pa-xs">
+      <div class="col-md-5 col-xs-6 q-pa-xs">
         <q-input square dense v-model="bitisTarih" label="Bitiş Tarihi">
           <template v-slot:append>
             <q-icon name="event" class="cursor-pointer">
@@ -59,38 +40,34 @@
           </template>
         </q-input>
       </div>
-
-      <div
-        class="col-sm-9 col-xs-12 q-mt-xs q-pa-xs"
-        :class="{ 'order-last': $q.screen.lt.sm }"
-      >
+      <div class="col-md-2 q-pl-xs col-xs-12 column justify-center">
+        <q-btn
+          class="full-width"
+          size="md"
+          outline
+          icon="search"
+          :loading="loading"
+          @click="btnRefresh"
+          >Getir</q-btn
+        >
+      </div>
+      <div class="col-md-12 col-xs-12">
         <q-input
           square
           dense
-          label="Fatura Ara"
+          label="Ara"
           class="full-width"
           v-model="searchText"
           clearable
           clear-icon="close"
         />
       </div>
-      <div class="col-sm-3 col-xs-12 column justify-center q-pa-sm">
-        <q-btn
-          dense
-          class="full-width full-height"
-          icon="search"
-          size="md"
-          :loading="loading"
-          @click="clickGetir"
-          >Getir</q-btn
-        >
-      </div>
     </div>
     <div class="q-mt-sm">
       <q-table
         v-if="$q.screen.gt.sm"
         :rows="filteredList"
-        :columns="columnsInvoice"
+        :columns="columnsInboxInvoice"
         class="grid-height"
         :wrap-cells="true"
         :loading="invoiceLoading"
@@ -103,6 +80,9 @@
       >
         <template v-slot:body="props">
           <q-tr :props="props">
+            <q-td>
+              <q-checkbox v-model="props.row.selected" color="primary" />
+            </q-td>
             <q-td key="invoiceNo" :props="props" class="text-center">
               <span class="text-weight-bold">{{ props.row.eFaturaNo }}</span>
               <br />
@@ -178,6 +158,22 @@
               >
                 <q-menu>
                   <q-list style="min-width: 120px">
+                    <q-separator />
+                    <q-item clickable v-close-popup @click="approve()">
+                      <q-item-section avatar>
+                        <q-icon name="task"></q-icon>
+                      </q-item-section>
+                      <q-item-section>Onayla</q-item-section>
+                    </q-item>
+                    <q-separator />
+                    <q-item clickable v-close-popup @click="decline(props.row)">
+                      <q-item-section avatar>
+                        <q-icon name="block"></q-icon>
+                      </q-item-section>
+                      <q-item-section>Reddet</q-item-section>
+                    </q-item>
+                    <q-separator />
+
                     <q-item
                       clickable
                       v-close-popup
@@ -189,6 +185,17 @@
                       <q-item-section>Göster</q-item-section>
                     </q-item>
                     <q-separator />
+
+                    <q-item
+                      clickable
+                      v-close-popup
+                      @click="sendEMail(props.row)"
+                    >
+                      <q-item-section avatar>
+                        <q-icon name="email"></q-icon>
+                      </q-item-section>
+                      <q-item-section>Mail At</q-item-section>
+                    </q-item>
                   </q-list>
                 </q-menu>
               </q-btn>
@@ -216,9 +223,15 @@
         <template v-slot:body="props">
           <q-tr :props="props">
             <q-td key="invoiceNo" :props="props" class="text-center">
-              <q-card class="my-card">
+              <q-card
+                class="my-card"
+                :class="{ 'bg-orange': props.row.selected }"
+              >
                 <q-card-section>
-                  <div class="row text-justify q-gutter-y-xs">
+                  <div
+                    class="row text-justify q-gutter-y-xs"
+                    @click="selectionInvoice(props.row)"
+                  >
                     <div class="col-xs-12 col-sm-6">
                       Fatura No:
                       <span class="text-weight-bold">
@@ -314,13 +327,63 @@
                         </div>
                       </div>
                     </div>
+                  </div>
+                  <div class="row">
                     <div class="col-12">
                       <q-btn
                         class="full-width"
-                        icon="visibility"
-                        @click="showInvoice(props.row)"
-                        >Göster</q-btn
+                        icon="more_horiz"
+                        :dense="$q.screen.lt.md"
+                        :loading="props.row.loading"
+                        :disable="props.row.loading"
                       >
+                        <q-menu>
+                          <q-list style="min-width: 120px">
+                            <q-separator />
+                            <q-item clickable v-close-popup @click="approve()">
+                              <q-item-section avatar>
+                                <q-icon name="task"></q-icon>
+                              </q-item-section>
+                              <q-item-section>Onayla</q-item-section>
+                            </q-item>
+                            <q-separator />
+                            <q-item
+                              clickable
+                              v-close-popup
+                              @click="decline(props.row)"
+                            >
+                              <q-item-section avatar>
+                                <q-icon name="block"></q-icon>
+                              </q-item-section>
+                              <q-item-section>Reddet</q-item-section>
+                            </q-item>
+                            <q-separator />
+
+                            <q-item
+                              clickable
+                              v-close-popup
+                              @click="showInvoice(props.row)"
+                            >
+                              <q-item-section avatar>
+                                <q-icon name="visibility"></q-icon>
+                              </q-item-section>
+                              <q-item-section>Göster</q-item-section>
+                            </q-item>
+                            <q-separator />
+
+                            <q-item
+                              clickable
+                              v-close-popup
+                              @click="sendEMail(props.row)"
+                            >
+                              <q-item-section avatar>
+                                <q-icon name="email"></q-icon>
+                              </q-item-section>
+                              <q-item-section>Mail At</q-item-section>
+                            </q-item>
+                          </q-list>
+                        </q-menu>
+                      </q-btn>
                     </div>
                   </div>
                 </q-card-section>
@@ -333,34 +396,48 @@
         </template>
       </q-table>
     </div>
+    <dialog-send-invoice-e-mail
+      :dialogState="dialogSendEMailState"
+      :invoice="invoiceAsEMail"
+      :isInboxInvoice="false"
+      @dialog-send-invoice-email-close="dialogSendEMailState = false"
+    ></dialog-send-invoice-e-mail>
   </q-page>
 </template>
+
 <script>
 import { defineComponent, ref, computed } from "vue";
-import { useQuasar } from "quasar";
 
-import { search } from "src/api/company.api";
-import { getInboxInvoiceListByCompanyId } from "src/api/invoice.api";
-import { columnsInvoice, columnsInvoiceMobile } from "src/util/invoice-columns";
-import { date } from "quasar";
-import { warning } from "src/util/notify";
+import {
+  approveInboxInvoices,
+  declineInboxInvoices,
+  getOutboxInvoiceList,
+} from "src/api/invoice.api";
+import { useQuasar, date } from "quasar";
+import { success, warning } from "src/util/notify";
+import { useStore } from "vuex";
+import DialogSendInvoiceEMail from "src/components/Invoice/DialogSendInvoiceEMail.vue";
+import {
+  columnsInboxInvoice,
+  columnsInvoiceMobile,
+} from "src/util/invoice-columns";
 
 export default defineComponent({
+  components: {
+    DialogSendInvoiceEMail,
+  },
   setup() {
     const $q = useQuasar();
+    const store = useStore();
+    let dialogSendEMailState = ref(false);
+    let searchText = ref("");
     let inboxInvoiceList = ref([]);
-    let companyOptions = ref([]);
-    let filteredCompanyList = [];
-    let loadingFilterCompany = ref(false);
-
     let loading = ref(false);
     let invoiceLoading = ref(false);
-    let searchText = ref("");
-    let companyId = ref("");
+
     let baslangicTarih = ref("");
     let bitisTarih = ref("");
     const rowsOptions = [5, 10, 25, 50, 100, 1000];
-
     const pagination = ref({
       sortBy: "desc",
       descending: true,
@@ -368,44 +445,14 @@ export default defineComponent({
       rowsPerPage: 10,
       rowsNumber: 0,
     });
-    const showTopNCompanyList = () => {
-      loadingFilterCompany.value = true;
-      if (filteredCompanyList.length > 0) return;
-      search("")
-        .then((response) => {
-          filteredCompanyList = response.data;
-          companyOptions.value = filteredCompanyList;
-        })
-        .finally(() => {
-          loadingFilterCompany.value = false;
-        });
-    };
-    const filterCompany = (val, update) => {
-      loadingFilterCompany.value = true;
-      search(val)
-        .then((response) => {
-          update(() => {
-            companyOptions.value = response?.data;
-            filteredCompanyList = companyOptions.value;
-          });
-        })
-        .finally(() => {
-          loadingFilterCompany.value = false;
-        });
-    };
 
+    let invoiceAsEMail = ref({});
     const getInvoiceList = (page = 0, rowsPerPage = 10) => {
       if (page > 0) page = page - 1;
       let baslangicTarihi = date.formatDate(baslangicTarih.value, "DD.MM.YYYY");
       let bitisTarihi = date.formatDate(bitisTarih.value, "DD.MM.YYYY");
       invoiceLoading.value = true;
-      getInboxInvoiceListByCompanyId(
-        companyId.value,
-        page,
-        rowsPerPage,
-        baslangicTarihi,
-        bitisTarihi
-      )
+      getOutboxInvoiceList(page, rowsPerPage, baslangicTarihi, bitisTarihi)
         .then((response) => {
           inboxInvoiceList.value = response.data.faturalar.map((invoice) => {
             return { selected: false, ...invoice };
@@ -419,9 +466,57 @@ export default defineComponent({
           invoiceLoading.value = false;
         });
     };
+    const btnRefresh = () => {
+      loading.value = true;
+      getInvoiceList();
+    };
+    const approve = () => {
+      let approvedInvoiceList = getSelectedInvoiceList();
+      if (approvedInvoiceList.length === 0) {
+        warning("Onaylamak istediğiniz faturaları seçiniz");
+        return;
+      }
+      let invoiceIdList = approvedInvoiceList.map((invoice) => {
+        return invoice.eFaturaId;
+      });
+      loading.value = true;
+      approveInboxInvoices(invoiceIdList)
+        .then((response) => {
+          success(response.data);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
+    const decline = () => {
+      let declineInvoiceList = getSelectedInvoiceList();
+
+      if (declineInvoiceList.length === 0) {
+        warning("Reddetmek istediğiniz faturaları seçiniz");
+        return;
+      }
+      let invoiceIdList = declineInvoiceList.map((invoice) => {
+        return invoice.eFaturaId;
+      });
+      loading.value = true;
+
+      declineInboxInvoices(invoiceIdList)
+        .then((response) => {
+          success(response.data);
+        })
+        .finally(() => {
+          loading.value = false;
+        });
+    };
+
+    const sendEMail = (invoice) => {
+      invoiceAsEMail.value = invoice;
+      dialogSendEMailState.value = true;
+    };
     const showInvoice = (invoice) => {
+      let userCompanyId = store.getters["user/getCompanyId"];
       window.open(
-        `${process.env.baseUrl}/Invoices/ShowInvoice/${invoice.eFaturaId}/${companyId.value}`,
+        `${process.env.baseUrl}/Invoices/ShowOutBoxInvoice/${invoice.eFaturaId}/${userCompanyId}`,
         "_blank"
       );
     };
@@ -445,43 +540,46 @@ export default defineComponent({
     const onRequest = (props) => {
       getInvoiceList(props.pagination.page, props.pagination.rowsPerPage);
     };
-    const clickGetir = () => {
-      if (!companyId.value) {
-        warning("Firma seçiniz!");
-        return;
-      }
-      loading.value = true;
-      getInvoiceList();
+    const getSelectedInvoiceList = () => {
+      let selected = inboxInvoiceList.value.filter(
+        (invoice) => invoice.selected
+      );
+      return selected;
+    };
+    const selectionInvoice = (invoice) => {
+      invoice.selected = !invoice.selected;
     };
     return {
+      searchText,
       filteredList,
       loading,
-      searchText,
-      pagination,
-      companyOptions,
-      companyId,
-      loadingFilterCompany,
-      columnsInvoice,
-      columnsInvoiceMobile,
-      filterCompany,
-      showTopNCompanyList,
+      invoiceLoading,
+      btnRefresh,
+      approve,
+      decline,
       showInvoice,
-      formatDate,
-      onRequest,
-      rowsOptions,
+      sendEMail,
+      dialogSendEMailState,
+      invoiceAsEMail,
       baslangicTarih,
       bitisTarih,
-      clickGetir,
-      invoiceLoading,
+      rowsOptions,
+      pagination,
+      onRequest,
+      columnsInboxInvoice,
+      columnsInvoiceMobile,
+      formatDate,
+      selectionInvoice,
     };
   },
 });
 </script>
+
 <style lang="sass" scoped>
 .grid-height
-  height: calc(100vh - 210px)
+  height: calc(100vh - 200px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 275px)
+        height: calc(100vh - 200px)
   @media (max-width:360px)
-        height: calc(100vh - 275px)
+        height: calc(100vh - 220px)
 </style>

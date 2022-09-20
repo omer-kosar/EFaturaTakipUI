@@ -28,6 +28,11 @@ const routes = [
         component: () => import("pages/InboxInvoiceList.vue"),
         meta: { permissions: [userType.taxPayer] },
       },
+      {
+        path: "/outboxinvoicelist",
+        component: () => import("pages/OutBoxInvoiceList.vue"),
+        meta: { permissions: [userType.taxPayer] },
+      },
 
       {
         path: "/financialadvisorinboxinvoicelist",

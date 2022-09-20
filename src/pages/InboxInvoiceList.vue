@@ -399,6 +399,7 @@
     <dialog-send-invoice-e-mail
       :dialogState="dialogSendEMailState"
       :invoice="invoiceAsEMail"
+      :isInboxInvoice="true"
       @dialog-send-invoice-email-close="dialogSendEMailState = false"
     ></dialog-send-invoice-e-mail>
   </q-page>
@@ -415,7 +416,7 @@ import {
 import { useQuasar, date } from "quasar";
 import { success, warning } from "src/util/notify";
 import { useStore } from "vuex";
-import DialogSendInvoiceEMail from "src/components/InboxInvoiceList/DialogSendInvoiceEMail.vue";
+import DialogSendInvoiceEMail from "src/components/Invoice/DialogSendInvoiceEMail.vue";
 import {
   columnsInboxInvoice,
   columnsInvoiceMobile,
