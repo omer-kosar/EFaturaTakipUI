@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm">
     <div class="row q-col-gutter-sm">
-      <div class="col-lg-12 col-md-8 col-xs-12 col-sm-12">
+      <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
         <q-card class="card-bg text-white">
           <q-card-section>
             <q-bar dark class="bg-primary text-white">
@@ -303,7 +303,8 @@ export default defineComponent({
     const getTitle = () => {
       if (
         !companyModel.value.vergiNo ||
-        companyModel.value.type !== CompanyType.Corporate
+        companyModel.value.type !== CompanyType.Corporate ||
+        currentUserIsAdmin
       )
         return;
       loadingCompanyTitle.value = true;

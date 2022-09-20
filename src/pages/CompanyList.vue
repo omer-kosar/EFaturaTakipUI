@@ -1,14 +1,25 @@
 <template>
   <q-page>
     <div class="q-pa-md">
-      <div class="row q-pb-sm justify-end">
-        <q-btn icon="add" color="green" @click="btnNewCompanyClick"
-          >Yeni Firma Kaydet</q-btn
-        >
+      <div class="row q-pb-sm">
+        <div class="col-sm-9 col-xs-12">
+          <q-input
+            square
+            dense
+            label="Firma Ara"
+            class="full-width"
+            v-model="search"
+            clearable
+            clear-icon="close"
+          />
+        </div>
+        <div class="col-sm-3 col-xs-12 column justify-center q-pa-sm">
+          <q-btn icon="add" color="green" @click="btnNewCompanyClick"></q-btn>
+        </div>
       </div>
       <component
         :is="$q.screen.lt.sm ? 'GridCompanyListMobile' : 'GridCompanyList'"
-        :companyList="companyList"
+        :companyList="filteredList"
         :loading="loading"
         @company-delete="openDeleteWarning"
         @company-update="updateCompany"
@@ -30,7 +41,7 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useRouter } from "vue-router";
 import GridCompanyList from "src/components/Company/GridCompanyList.vue";
 import GridCompanyListMobile from "src/components/Company/GridCompanyListMobile.vue";
@@ -46,6 +57,7 @@ export default defineComponent({
     let companyList = ref([]);
     let loading = ref(false);
     let deleteWarningState = ref(false);
+    let search = ref("");
     const getCompanyList = () => {
       loading.value = true;
       getList()
@@ -80,15 +92,32 @@ export default defineComponent({
     const btnNewCompanyClick = () => {
       router.push({ name: "save-company" });
     };
+    const filteredList = computed(() => {
+      if (search.value !== "" && search.value) {
+        return companyList.value.filter((item) => {
+          let filterText = search.value.toLocaleUpperCase("tr-TR");
+          return (
+            item.title?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.firstName?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.lastName?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.vergiNo?.includes(filterText) ||
+            item.tcKimlikNo?.includes(filterText)
+          );
+        });
+      }
+      return companyList.value;
+    });
+
     getCompanyList();
     return {
-      companyList,
       loading,
       openDeleteWarning,
       deleteWarningState,
       deleteCompany,
       updateCompany,
       btnNewCompanyClick,
+      search,
+      filteredList,
     };
   },
 });
@@ -96,9 +125,9 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .grid-height
-  height: calc(100vh - 130px)
+  height: calc(100vh - 140px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 450px)
+        height: calc(100vh - 185px)
   @media (max-width:360px)
-        height: calc(100vh - 470px)
+        height: calc(100vh - 135px)
 </style>

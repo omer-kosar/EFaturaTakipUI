@@ -3,9 +3,10 @@
     :rows="companyList"
     :columns="columns"
     row-key="name"
-    wrap-cells="true"
+    :wrap-cells="true"
     :loading="loading"
     class="grid-height"
+    v-model:pagination="pagination"
   >
     <template v-slot:body="props">
       <q-tr :props="props">
@@ -22,10 +23,6 @@
         <q-td key="title" :props="props">
           <b>{{ getTitle(props.row) }}</b>
         </q-td>
-        <!-- 
-        <q-td key="tcknVkn" :props="props">
-          <b>{{ props.row.tcknVkn }}</b>
-        </q-td> -->
 
         <q-td key="taxOffice" :props="props">
           <b>{{ props.row.taxOffice }}</b>
@@ -150,7 +147,8 @@
 </template>
 <script>
 import { CompanyType } from "src/util/constants";
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
+
 const columns = [
   {
     name: "",
@@ -166,16 +164,6 @@ const columns = [
     align: "left",
     sortable: true,
   },
-
-  // {
-  //   name: "tcknVkn",
-  //   required: true,
-  //   label: "TCKN/VKN",
-  //   align: "left",
-  //   field: (row) => row.tcknVkn,
-  //   sortable: true,
-  // },
-
   {
     name: "taxOffice",
     required: true,
@@ -227,11 +215,17 @@ const columns = [
   },
 ];
 export default defineComponent({
-  props: ["loading", "companyList"],
+  props: ["loading", "companyList", "pagination"],
 
   setup(props, { emit }) {
     const companyList = computed(() => props.companyList);
     const loading = computed(() => props.loading);
+    const pagination = ref({
+      sortBy: "desc",
+      descending: false,
+      page: 1,
+      rowsPerPage: 10,
+    });
     const btnDeleteClick = (company) => {
       emit("company-delete", company);
     };
@@ -251,6 +245,7 @@ export default defineComponent({
       btnDeleteClick,
       btnUpdateClick,
       getTitle,
+      pagination,
     };
   },
 });
