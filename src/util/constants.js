@@ -74,7 +74,7 @@ const adminMenu = [
   {
     title: "Giden Faturalar",
     icon: "receipt_long",
-    routeLink: "/outboxinvoicelist",
+    routeLink: "/outboxinvoicelistbycompanies",
   },
   {
     title: "Kullanıcı Kaydet",
@@ -112,7 +112,7 @@ const finiancialadvisorMenu = [
   {
     title: "Giden Faturalar",
     icon: "receipt_long",
-    routeLink: "/outboxinvoicelist",
+    routeLink: "/outboxinvoicelistbycompanies",
   },
 ];
 const guessMenu = [

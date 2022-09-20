@@ -41,6 +41,13 @@ const routes = [
           permissions: [userType.admin, userType.accountant],
         },
       },
+      {
+        path: "/outboxinvoicelistbycompanies",
+        component: () => import("src/pages/OutboxInvoiceListByCompanies.vue"),
+        meta: {
+          permissions: [userType.admin, userType.accountant],
+        },
+      },
 
       {
         path: "/showInvoice",

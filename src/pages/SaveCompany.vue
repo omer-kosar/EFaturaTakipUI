@@ -316,7 +316,7 @@ export default defineComponent({
         });
     };
     const btnGoBackList = () => {
-      if (currentUserIsAdmin) router.push({ name: "company-list" });
+      if (currentUserIsAdmin.value) router.push({ name: "company-list" });
       else router.push({ name: "customer-list" });
     };
     if (companyId) {

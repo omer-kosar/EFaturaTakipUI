@@ -58,6 +58,21 @@ const getInboxInvoiceListByCompanyId = (
   }
   return api.get(request);
 };
+const getOutboxInvoiceListByCompanyId = (
+  companyId,
+  pageIndex = 0,
+  pageSize = 10,
+  baslangicTarihi,
+  bitisTarihi
+) => {
+  let request = `invoices/getOutboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  if (baslangicTarihi)
+    request = `${request}&baslangicTarihi=${baslangicTarihi}`;
+  if (bitisTarihi) {
+    request = `${request}&bitisTarihi=${bitisTarihi}`;
+  }
+  return api.get(request);
+};
 
 export {
   getInboxInvoiceList,
@@ -67,4 +82,5 @@ export {
   sendInvoiceEMail,
   sendOutBoxInvoiceEMail,
   getInboxInvoiceListByCompanyId,
+  getOutboxInvoiceListByCompanyId,
 };
