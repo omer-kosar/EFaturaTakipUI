@@ -216,7 +216,6 @@ export default defineComponent({
       emit("customer-delete", customer);
     };
     const btnUpdateClick = (customer) => {
-      console.warn();
       emit("customer-update", customer);
     };
     const pagination = ref({

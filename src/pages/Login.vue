@@ -92,7 +92,6 @@ export default defineComponent({
       loading.value = true;
       login(loginModel.value)
         .then((response) => {
-          console.warn("user model===", response.data);
           saveItemToStorage("user", response.data);
           store.dispatch("user/setUser", response.data);
           router.push("/");

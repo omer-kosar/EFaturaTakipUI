@@ -226,7 +226,6 @@ export default defineComponent({
     };
     const btnSaveClick = () => {
       // if (!validate()) return;
-      console.warn(userModel.value);
 
       loading.value = true;
       if (userId) {
@@ -259,7 +258,6 @@ export default defineComponent({
             return { label: companyItem.name, value: companyItem.id };
           });
           companyOptions.value = filteredCompanyList;
-          console.warn("top 20 list", response.data);
         })
         .finally(() => {
           loadingFilterCompany.value = false;

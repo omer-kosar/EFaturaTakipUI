@@ -165,18 +165,15 @@ export default defineComponent({
     const userList = computed(() => props.userList);
     const loading = computed(() => props.loading);
     const roleFormat = (roles) => {
-      console.warn("roller===", roles);
       return roles.join(",");
     };
     const btnDeleteClick = (stock) => {
       emit("user-delete", stock);
     };
     const btnUpdateClick = (stock) => {
-      console.warn();
       emit("user-update", stock);
     };
     const formatDate = (val) => {
-      console.warn(val);
       return date.formatDate(val, "DD.MM.YYYY");
     };
     return {

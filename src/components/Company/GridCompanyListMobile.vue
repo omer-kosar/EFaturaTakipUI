@@ -185,7 +185,6 @@ export default defineComponent({
       emit("company-delete", company);
     };
     const btnUpdateClick = (company) => {
-      console.warn();
       emit("company-update", company);
     };
     const getTitle = (row) => {
@@ -193,7 +192,6 @@ export default defineComponent({
         ? row.title
         : `${row.firstName} ${row.lastName}`;
     };
-    console.warn(companyList);
     return {
       columns,
       companyList,

@@ -112,7 +112,6 @@ export default defineComponent({
       emit("stock-delete", stock);
     };
     const btnUpdateClick = (stock) => {
-      console.warn();
       emit("stock-update", stock);
     };
     return {
