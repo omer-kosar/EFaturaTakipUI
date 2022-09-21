@@ -202,11 +202,6 @@ export default defineComponent({
       btnUpdateClick,
       getTitle,
       pagination,
-      pagesNumber: computed(() => {
-        return Math.ceil(
-          companyList.value.length / pagination.value.rowsPerPage
-        );
-      }),
     };
   },
 });

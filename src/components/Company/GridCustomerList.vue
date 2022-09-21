@@ -6,6 +6,7 @@
     wrap-cells="true"
     :loading="loading"
     class="grid-height"
+    v-model:pagination="pagination"
   >
     <template v-slot:body="props">
       <q-tr :props="props">
@@ -139,7 +140,7 @@
 </template>
 <script>
 import { CompanyType } from "src/util/constants";
-import { defineComponent, computed } from "vue";
+import { defineComponent, computed, ref } from "vue";
 const columns = [
   {
     name: "",
@@ -206,11 +207,11 @@ const columns = [
   },
 ];
 export default defineComponent({
-  props: ["loading", "customerList"],
+  props: ["loading", "companyList"],
 
   setup(props, { emit }) {
-    const customerList = computed(() => props.customerList);
     const loading = computed(() => props.loading);
+    const customerList = computed(() => props.companyList);
     const btnDeleteClick = (customer) => {
       emit("customer-delete", customer);
     };
@@ -218,6 +219,12 @@ export default defineComponent({
       console.warn();
       emit("customer-update", customer);
     };
+    const pagination = ref({
+      sortBy: "desc",
+      descending: false,
+      page: 1,
+      rowsPerPage: 10,
+    });
     const getTitle = (row) => {
       return row.type === CompanyType.Corporate
         ? row.title
@@ -230,6 +237,7 @@ export default defineComponent({
       btnDeleteClick,
       btnUpdateClick,
       getTitle,
+      pagination,
     };
   },
 });

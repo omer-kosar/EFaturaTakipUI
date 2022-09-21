@@ -1,14 +1,25 @@
 <template>
   <q-page>
     <div class="q-pa-md">
-      <div class="row q-pb-sm justify-end">
-        <q-btn icon="add" color="green" @click="btnNewCustomerClick"
-          >Yeni Firma Kaydet</q-btn
-        >
+      <div class="row q-pb-sm">
+        <div class="col-sm-9 col-xs-12">
+          <q-input
+            square
+            dense
+            label="Firma Ara"
+            class="full-width"
+            v-model="search"
+            clearable
+            clear-icon="close"
+          />
+        </div>
+        <div class="col-sm-3 col-xs-12 column justify-center q-pa-sm">
+          <q-btn icon="add" color="green" @click="btnNewCustomerClick"></q-btn>
+        </div>
       </div>
       <component
         :is="$q.screen.lt.sm ? 'GridCustomerListMobile' : 'GridCustomerList'"
-        :customerList="customerList"
+        :companyList="filteredList"
         :loading="loading"
         @customer-delete="openDeleteWarning"
         @customer-update="updateCustomer"
@@ -29,7 +40,7 @@
   </q-page>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import GridCustomerList from "src/components/Company/GridCustomerList.vue";
 import GridCustomerListMobile from "src/components/Company/GridCustomerListMobile.vue";
 import DialogDeleteWarning from "src/components/Common/DialogDeleteWarning.vue";
@@ -44,6 +55,7 @@ export default defineComponent({
     let customerList = ref([]);
     let loading = ref(false);
     let deleteWarningState = ref(false);
+    let search = ref("");
     const selectedCustomer = ref({});
 
     const openDeleteWarning = (customer) => {
@@ -79,15 +91,31 @@ export default defineComponent({
     const btnNewCustomerClick = () => {
       router.push({ name: "save-company" });
     };
+    const filteredList = computed(() => {
+      if (search.value !== "" && search.value) {
+        return customerList.value.filter((item) => {
+          let filterText = search.value.toLocaleUpperCase("tr-TR");
+          return (
+            item.title?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.firstName?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.lastName?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.vergiNo?.includes(filterText) ||
+            item.tcKimlikNo?.includes(filterText)
+          );
+        });
+      }
+      return customerList.value;
+    });
     getList();
     return {
-      customerList,
       loading,
       openDeleteWarning,
       deleteWarningState,
       deleteCustomer,
       updateCustomer,
       btnNewCustomerClick,
+      filteredList,
+      search,
     };
   },
 });
@@ -95,9 +123,9 @@ export default defineComponent({
 
 <style lang="sass" scoped>
 .grid-height
-  height: calc(100vh - 130px)
+  height: calc(100vh - 145px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 450px)
+        height: calc(100vh - 185px)
   @media (max-width:360px)
-        height: calc(100vh - 470px)
+        height: calc(100vh - 180px)
 </style>
