@@ -20,6 +20,8 @@
       </div>
     </div>
   </q-page>
+  mobil kullanıcı listesi,mobil stok listesi, fatura gönder, stok kayıt nokta
+  virgül
 </template>
 
 <script>

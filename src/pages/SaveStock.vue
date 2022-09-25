@@ -37,13 +37,23 @@
 
               <q-item class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    dense
-                    v-model="stockModel.price"
-                    label="KDV'siz Fiyat"
-                    ref="refPrice"
-                    type="number"
-                  />
+                  <VueNumberFormat
+                    :class="{
+                      'number-format-dark': $q.dark.isActive,
+                      'number-format': !$q.dark.isActive,
+                    }"
+                    v-model:value="stockModel.price"
+                    :options="{
+                      precision: 2,
+                      prefix: '₺ ',
+                      suffix: '',
+                      decimal: ',',
+                      thousand: '.',
+                      acceptNegative: false,
+                      isInteger: false,
+                    }"
+                  >
+                  </VueNumberFormat>
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
@@ -62,13 +72,23 @@
               </q-item>
               <q-item class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    dense
-                    v-model="priceWithTax"
-                    label="Kdv'li Fiyat"
-                    ref="refPrice"
-                    type="number"
-                  />
+                  <VueNumberFormat
+                    :class="{
+                      'number-format-dark': $q.dark.isActive,
+                      'number-format': !$q.dark.isActive,
+                    }"
+                    v-model:value="priceWithTax"
+                    :options="{
+                      precision: 2,
+                      prefix: '₺ ',
+                      suffix: '',
+                      decimal: ',',
+                      thousand: '.',
+                      acceptNegative: false,
+                      isInteger: false,
+                    }"
+                  >
+                  </VueNumberFormat>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -94,10 +114,9 @@
   </q-page>
 </template>
 <script>
-import { TaxValueAdded, Unit } from "src/util/constants";
+import { TaxValueAdded, Unit, taxValueOptions } from "src/util/constants";
 import { defineComponent, ref, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-
 import { createStock, getStockItem, updateStock } from "src/api/stock.api";
 import {
   rulesPrice,
@@ -106,18 +125,16 @@ import {
   rulesUnit,
 } from "src/validations/Stock/stock.rules";
 import { success } from "src/util/notify";
-const taxValueOptions = [
-  { label: "%18", value: TaxValueAdded.OnSekiz },
-  { label: "%8", value: TaxValueAdded.Sekiz },
-  { label: "%1", value: TaxValueAdded.Bir },
-  { label: "%0", value: TaxValueAdded.Sifir },
-];
+import VueNumberFormat from "vue-number-format";
+import { convertDecimal } from "src/util/helper-methods";
+
 const unitOptions = [
   { label: "Adet", value: Unit.Piece },
   { label: "KG", value: Unit.Kilogram },
   { label: "Metre", value: Unit.Metre },
 ];
 export default defineComponent({
+  components: { VueNumberFormat },
   setup() {
     const route = useRoute();
     const router = useRouter();
@@ -178,14 +195,7 @@ export default defineComponent({
     const btnGoBackList = () => {
       router.push({ name: "stock-list" });
     };
-    const convertDecimal = (value) => {
-      value = value.toString().replace(/,/g, ".");
-      if (!isNaN(value)) {
-        return Number.parseFloat(Number.parseFloat(value).toFixed(2));
-      }
 
-      return value;
-    };
     const refName = ref("");
     const refPrice = ref("");
     const refUnit = ref("");
@@ -224,3 +234,45 @@ export default defineComponent({
   },
 });
 </script>
+<style scoped>
+.number-format {
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.24);
+  height: 100%;
+}
+.number-format:focus {
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.24) !important;
+  outline: thick;
+}
+
+.number-format:focus-visible {
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 2px solid #1976d2 !important;
+  outline: none;
+}
+.number-format-dark {
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  border-bottom: 1px solid rgb(133, 133, 133);
+  height: 100%;
+  background-color: transparent;
+  color: #fff;
+}
+.number-format-dark:focus-visible {
+  border-left: none !important;
+  border-right: none !important;
+  border-top: none !important;
+  border-bottom: 2px solid #1976d2 !important;
+  outline: none;
+  background-color: transparent;
+  color: #fff;
+}
+</style>

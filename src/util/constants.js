@@ -28,20 +28,31 @@ const mapUserType = new Map([
 
 const companyMenu = [
   {
-    title: "Gelen Faturalar",
+    title: "Gelen Elektronik Faturalar",
     icon: "receipt_long",
     routeLink: "/inboxinvoicelist",
   },
   {
-    title: "Giden Faturalar",
+    title: "Giden Elektronik Faturalar",
     icon: "receipt_long",
     routeLink: "/outboxinvoicelist",
+  },
+  {
+    title: "Fatura Listesi",
+    icon: "receipt_long",
+    routeLink: "/invoicelist",
   },
 
   {
     title: "Firma Kaydet",
     icon: "add_business",
     routeLink: "/savecompany",
+  },
+
+  {
+    title: "Fatura Kaydet",
+    icon: "post_add",
+    routeLink: "/saveinvoice",
   },
   {
     title: "Firma Listesi",
@@ -122,6 +133,22 @@ const guessMenu = [
     routeLink: "/login",
   },
 ];
+const currencyOptions = {
+  precision: 2,
+  prefix: "₺ ",
+  suffix: "",
+  decimal: ",",
+  thousand: ".",
+  acceptNegative: false,
+  isInteger: false,
+};
+const taxValueOptions = [
+  { label: "%18", value: TaxValueAdded.OnSekiz },
+  { label: "%8", value: TaxValueAdded.Sekiz },
+  { label: "%1", value: TaxValueAdded.Bir },
+  { label: "%0", value: TaxValueAdded.Sifir },
+];
+
 export {
   userType,
   mapUserType,
@@ -132,4 +159,6 @@ export {
   adminMenu,
   finiancialadvisorMenu,
   guessMenu,
+  currencyOptions,
+  taxValueOptions,
 };

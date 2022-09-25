@@ -1,6 +1,6 @@
 import { api } from "boot/axios";
 
-const createCompany = (company) => api.post(`Companies/CreateCompany`, company);
+  const createCompany = (company) => api.post(`Companies/CreateCompany`, company);
 const updateCompany = (companyId, company) =>
   api.put(`Companies/${companyId}`, company);
 
@@ -18,6 +18,12 @@ const search = (name, count) => {
     return api.get(`Companies/searchcompany?name=${name}&count=${count}`);
   return api.get(`Companies/searchcompany?name=${name}`);
 };
+const searchCustomer = (name, count) => {
+  if (count)
+    return api.get(`Companies/SearchCustomer?name=${name}&count=${count}`);
+  return api.get(`Companies/SearchCustomer?name=${name}`);
+};
+
 const changeCompaniesAdvisor = (advisorId, companyList) =>
   api.post(`Companies/changeCompaniesAdvisor/${advisorId}`, companyList);
 
@@ -29,6 +35,7 @@ export {
   updateCompany,
   getCompanyTitle,
   search,
+  searchCustomer,
   getCustomerList,
   getAdvisorCompanies,
   getCompanies,

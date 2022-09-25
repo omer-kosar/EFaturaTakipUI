@@ -28,6 +28,13 @@ const routes = [
         component: () => import("pages/InboxInvoiceList.vue"),
         meta: { permissions: [userType.taxPayer] },
       },
+
+      {
+        path: "/invoicelist",
+        component: () => import("pages/InvoiceList.vue"),
+        meta: { permissions: [userType.taxPayer] },
+      },
+
       {
         path: "/outboxinvoicelist",
         component: () => import("pages/OutBoxInvoiceList.vue"),
@@ -59,6 +66,12 @@ const routes = [
         path: "/saveStock/:id?",
         component: () => import("pages/SaveStock.vue"),
         name: "save-stock",
+        meta: { permissions: [userType.taxPayer] },
+      },
+      {
+        path: "/saveInvoice/:id?",
+        component: () => import("pages/SaveInvoice.vue"),
+        name: "save-invoice",
         meta: { permissions: [userType.taxPayer] },
       },
 

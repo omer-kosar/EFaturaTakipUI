@@ -42,7 +42,10 @@
   </q-dialog>
 </template>
 <script>
-import { sendInvoiceEMail, sendOutBoxInvoiceEMail } from "src/api/invoice.api";
+import {
+  sendInvoiceEMail,
+  sendOutBoxInvoiceEMail,
+} from "src/api/electronicInvoice.api";
 import { success } from "src/util/notify";
 import { defineComponent, computed, ref } from "vue";
 import { useStore } from "vuex";

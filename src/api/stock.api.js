@@ -6,4 +6,8 @@ const updateStock = (stockId, stock) => api.put(`stocks/${stockId}`, stock);
 const getList = () => api.get("stocks/getList");
 const stockDelete = (id) => api.delete(`stocks/delete/${id}`);
 const getStockItem = (id) => api.get(`stocks/${id}`);
-export { createStock, getList, stockDelete, getStockItem, updateStock };
+const search = (name, count) => {
+  if (count) return api.get(`Stocks/searchstock?name=${name}&count=${count}`);
+  return api.get(`Stocks/searchstock?name=${name}`);
+};
+export { createStock, getList, stockDelete, getStockItem, updateStock, search };

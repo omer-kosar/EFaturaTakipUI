@@ -340,7 +340,7 @@ import { defineComponent, ref, computed } from "vue";
 import { useQuasar } from "quasar";
 
 import { search } from "src/api/company.api";
-import { getInboxInvoiceListByCompanyId } from "src/api/invoice.api";
+import { getInboxInvoiceListByCompanyId } from "src/api/electronicInvoice.api";
 import { columnsInvoice, columnsInvoiceMobile } from "src/util/invoice-columns";
 import { date } from "quasar";
 import { warning } from "src/util/notify";
@@ -481,7 +481,7 @@ export default defineComponent({
 .grid-height
   height: calc(100vh - 210px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 275px)
+        height: calc(100vh - 330px)
   @media (max-width:360px)
-        height: calc(100vh - 275px)
+        height: calc(100vh - 330px)
 </style>

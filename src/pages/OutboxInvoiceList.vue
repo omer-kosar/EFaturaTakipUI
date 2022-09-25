@@ -412,7 +412,7 @@ import {
   approveInboxInvoices,
   declineInboxInvoices,
   getOutboxInvoiceList,
-} from "src/api/invoice.api";
+} from "src/api/electronicInvoice.api";
 import { useQuasar, date } from "quasar";
 import { success, warning } from "src/util/notify";
 import { useStore } from "vuex";
@@ -470,6 +470,7 @@ export default defineComponent({
       loading.value = true;
       getInvoiceList();
     };
+
     const approve = () => {
       let approvedInvoiceList = getSelectedInvoiceList();
       if (approvedInvoiceList.length === 0) {
@@ -522,13 +523,15 @@ export default defineComponent({
     };
     const filteredList = computed(() => {
       if (searchText.value !== "" && searchText.value) {
+        console.warn("list>>>>>>", inboxInvoiceList.value);
         return inboxInvoiceList.value.filter((item) => {
           let filterText = searchText.value.toLocaleUpperCase("tr-TR");
+          console.warn("item===>>>>>", item);
           return (
-            item.targetTitle.toLocaleUpperCase("tr-TR").includes(filterText) ||
-            item.targetTcknVkn.includes(filterText) ||
-            item.eFaturaNo.toLocaleUpperCase("tr-TR").includes(filterText) ||
-            item.eFaturaId.toLocaleUpperCase("tr-TR").includes(filterText)
+            item.targetTitle?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.targetTcknVkn?.includes(filterText) ||
+            item.eFaturaNo?.toLocaleUpperCase("tr-TR").includes(filterText) ||
+            item.eFaturaId?.toLocaleUpperCase("tr-TR").includes(filterText)
           );
         });
       }
@@ -549,6 +552,8 @@ export default defineComponent({
     const selectionInvoice = (invoice) => {
       invoice.selected = !invoice.selected;
     };
+
+    btnRefresh();
     return {
       searchText,
       filteredList,
@@ -579,7 +584,7 @@ export default defineComponent({
 .grid-height
   height: calc(100vh - 200px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 200px)
+        height: calc(100vh - 260px)
   @media (max-width:360px)
         height: calc(100vh - 220px)
 </style>
