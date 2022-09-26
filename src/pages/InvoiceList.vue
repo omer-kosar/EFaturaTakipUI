@@ -9,7 +9,7 @@
           icon="add"
           color="green"
           class="full-width"
-          @click="btnNewStockClick"
+          @click="btnNewInvoiceClick"
         ></q-btn>
       </div>
     </div>
@@ -20,6 +20,7 @@
         :loading="loading"
         @invoice-delete="openDeleteWarning"
         @invoice-update="updateInvoice"
+        @show-invoice-items="showInvioceItemList"
       />
     </div>
     <dialog-delete-warning
@@ -34,6 +35,12 @@
         </div>
       </template>
     </dialog-delete-warning>
+    <dialog-invoice-item-list
+      :dialogState="dialogInvoiceItemListState"
+      :invoiceItemList="invoiceItemList"
+      :loading="loadingInvoiceItemList"
+      @dialog-invoice-item-list-close="dialogInvoiceItemListState = false"
+    ></dialog-invoice-item-list>
   </q-page>
 </template>
 <script>
@@ -41,16 +48,31 @@ import { defineComponent, ref } from "vue";
 import DialogDeleteWarning from "src/components/Common/DialogDeleteWarning.vue";
 import GridInvoiceList from "src/components/Invoice/GridInvoiceList.vue";
 import GridInvoiceListMobile from "src/components/Invoice/GridInvoiceListMobile.vue";
-import { getList } from "src/api/invoice.api";
-
+import {
+  getInvoiceItemList,
+  getList,
+  invoiceDelete,
+} from "src/api/invoice.api";
+import { success } from "src/util/notify";
+import { useRouter } from "vue-router";
+import DialogInvoiceItemList from "src/components/Invoice/DialogInvoiceItemList.vue";
 export default defineComponent({
-  components: { DialogDeleteWarning, GridInvoiceList, GridInvoiceListMobile },
+  components: {
+    DialogDeleteWarning,
+    GridInvoiceList,
+    GridInvoiceListMobile,
+    DialogInvoiceItemList,
+  },
   setup() {
     let loading = ref(false);
+    let loadingInvoiceItemList = ref(false);
     let invoiceList = ref([]);
+    let invoiceItemList = ref([]);
     let search = ref("");
     let selectedInvoice = ref({});
     let deleteWarningState = ref(false);
+    let dialogInvoiceItemListState = ref(false);
+    const router = useRouter();
 
     const getInvoiceList = () => {
       loading.value = true;
@@ -82,15 +104,35 @@ export default defineComponent({
       selectedInvoice.value = invoice;
       deleteWarningState.value = true;
     };
+    const btnNewInvoiceClick = () => {
+      router.push({ name: "save-invoice" });
+    };
+    const showInvioceItemList = (invoice) => {
+      console.warn("show invoice>>>>>>>", invoice);
+      loadingInvoiceItemList.value = true;
+      getInvoiceItemList(invoice.invoiceId)
+        .then((response) => {
+          invoiceItemList.value = response.data;
+          dialogInvoiceItemListState.value = true;
+        })
+        .finally(() => {
+          loadingInvoiceItemList.value = false;
+        });
+    };
     getInvoiceList();
     return {
       loading,
+      loadingInvoiceItemList,
       invoiceList,
+      invoiceItemList,
       search,
       deleteInvoice,
       updateInvoice,
       openDeleteWarning,
       deleteWarningState,
+      dialogInvoiceItemListState,
+      btnNewInvoiceClick,
+      showInvioceItemList,
     };
   },
 });

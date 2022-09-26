@@ -421,7 +421,7 @@ export default defineComponent({
     };
     const showInvoice = (invoice) => {
       window.open(
-        `${process.env.baseUrl}/Invoices/ShowOutBoxInvoice/${invoice.eFaturaId}/${companyId.value}`,
+        `${process.env.baseUrl}/ElectronicInvoices/ShowOutBoxInvoice/${invoice.eFaturaId}/${companyId.value}`,
         "_blank"
       );
     };

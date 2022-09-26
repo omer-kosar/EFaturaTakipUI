@@ -516,7 +516,7 @@ export default defineComponent({
     const showInvoice = (invoice) => {
       let userCompanyId = store.getters["user/getCompanyId"];
       window.open(
-        `${process.env.baseUrl}/Invoices/ShowInvoice/${invoice.eFaturaId}/${userCompanyId}`,
+        `${process.env.baseUrl}/ElectronicInvoices/ShowInvoice/${invoice.eFaturaId}/${userCompanyId}`,
         "_blank"
       );
     };

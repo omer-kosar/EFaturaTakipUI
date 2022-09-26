@@ -49,7 +49,7 @@
                 <q-item
                   clickable
                   v-close-popup
-                  @click="btnDeleteClick(props.row)"
+                  @click="btnDetailClick(props.row)"
                 >
                   <q-item-section avatar>
                     <q-icon name="visibility"></q-icon>
@@ -140,6 +140,10 @@ export default defineComponent({
     const btnUpdateClick = (invoice) => {
       emit("invoice-update", invoice);
     };
+    const btnDetailClick = (invoice) => {
+      emit("show-invoice-items", invoice);
+    };
+
     return {
       invoiceList,
       loading,
@@ -148,6 +152,7 @@ export default defineComponent({
       moneyFormat,
       btnDeleteClick,
       btnUpdateClick,
+      btnDetailClick,
     };
   },
 });
