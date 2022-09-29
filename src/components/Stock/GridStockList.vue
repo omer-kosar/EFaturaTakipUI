@@ -14,7 +14,7 @@
         </q-td>
 
         <q-td key="price" :props="props">
-          <b>{{ props.row.price }}</b>
+          <b>{{ moneyFormat(props.row.price) }}</b>
         </q-td>
 
         <q-td key="unit" :props="props">
@@ -22,7 +22,12 @@
         </q-td>
 
         <q-td key="valueAddedTax" :props="props">
-          <b>{{ props.row.valueAddedTax }}</b>
+          <b>%{{ props.row.valueAddedTax }}</b>
+        </q-td>
+        <q-td key="priceWithTax" :props="props">
+          <b>{{
+            countPriceWithTax(props.row.price, props.row.valueAddedTax)
+          }}</b>
         </q-td>
 
         <q-td key="buttons" :props="props">
@@ -59,6 +64,7 @@
   </q-table>
 </template>
 <script>
+import { formatMoney } from "src/util/helper-methods";
 import { defineComponent, computed } from "vue";
 
 const columns = [
@@ -97,6 +103,16 @@ const columns = [
     field: (row) => row.valueAddedTax,
     sortable: true,
   },
+
+  {
+    name: "priceWithTax",
+    required: true,
+    label: "KDV'li Fiyat",
+    align: "left",
+    field: (row) => row.priceWithTax,
+    sortable: true,
+  },
+
   {
     name: "buttons",
     label: "",
@@ -114,12 +130,21 @@ export default defineComponent({
     const btnUpdateClick = (stock) => {
       emit("stock-update", stock);
     };
+    const moneyFormat = (value) => {
+      return formatMoney(value);
+    };
+    const countPriceWithTax = (price, tax) => {
+      let priceWithTax = price * (1 + tax / 100);
+      return formatMoney(priceWithTax);
+    };
     return {
       stockList,
       loading,
       columns,
       btnDeleteClick,
       btnUpdateClick,
+      moneyFormat,
+      countPriceWithTax,
     };
   },
 });

@@ -44,7 +44,7 @@ module.exports = configure(function (ctx) {
       env: {
         baseUrl: ctx.dev
           ? "https://localhost:7106/api"
-          : "http://192.168.253.124:8081/api",
+          : "http://192.168.1.6:8081/api",
         // "https://localhost:8001",
       },
       // transpile: false,

@@ -98,7 +98,7 @@ export default defineComponent({
 .grid-height
   height: calc(100vh - 130px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 450px)
+        height: calc(100vh - 190px)
   @media (max-width:360px)
-        height: calc(100vh - 470px)
+        height: calc(100vh - 190px)
 </style>

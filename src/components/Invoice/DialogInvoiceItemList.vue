@@ -10,7 +10,11 @@
       </q-bar>
       <q-card-section>
         <component
-          :is="$q.screen.lt.sm ? 'GridInvoiceItemList' : 'GridInvoiceItemList'"
+          :is="
+            $q.screen.lt.sm
+              ? 'GridInvoiceItemListMobile'
+              : 'GridInvoiceItemList'
+          "
           :invoiceItemList="invoiceItemList"
           :loading="loading"
         />
@@ -55,9 +59,10 @@
 import { convertDecimal, formatMoney } from "src/util/helper-methods";
 import { defineComponent, computed, ref } from "vue";
 import GridInvoiceItemList from "./GridInvoiceItemList.vue";
+import GridInvoiceItemListMobile from "./GridInvoiceItemListMobile.vue";
 export default defineComponent({
   props: ["dialogState", "invoiceItemList", "loading"],
-  components: { GridInvoiceItemList },
+  components: { GridInvoiceItemList, GridInvoiceItemListMobile },
   setup(props, { emit }) {
     let dialogState = computed({
       get: () => {

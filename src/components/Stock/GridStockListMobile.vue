@@ -10,72 +10,121 @@
     <template v-slot:body="props">
       <q-tr :props="props">
         <q-td key="stockName" :props="props">
-          <b>{{ props.row.name }}</b>
-        </q-td>
-        <q-td key="price" :props="props">
-          <b>{{ props.row.price }}</b>
-        </q-td>
+          <q-card>
+            <q-card-section>
+              <div class="row text-justify q-gutter-y-xs">
+                <div class="col-xs-12 col-sm-6">
+                  Adı:
+                  <span class="text-weight-bold">
+                    {{ props.row.name }}
+                  </span>
+                </div>
 
-        <q-td key="unit" :props="props">
-          <b>{{ props.row.unit }}</b>
-        </q-td>
+                <div class="col-xs-12 col-sm-6">
+                  Fiyat:
+                  {{ moneyFormat(props.row.price) }}
+                </div>
 
-        <q-td key="valueAddedTax" :props="props">
-          <b>{{ props.row.unit }}</b>
-        </q-td>
+                <div class="col-xs-12 col-sm-6">
+                  Birim:
+                  {{ props.row.unitDescription }}
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  KDV: % {{ props.row.valueAddedTax }}
+                </div>
+                <div class="col-xs-12 col-sm-6">
+                  KDV'li Fiyat:
+                  <span class="text-weight-bold">
+                    {{
+                      countPriceWithTax(
+                        props.row.price,
+                        props.row.valueAddedTax
+                      )
+                    }}
+                  </span>
+                </div>
+
+                <div class="col-xs-12 col-sm-12">
+                  <q-btn
+                    class="full-width"
+                    icon="more_horiz"
+                    :dense="$q.screen.lt.md"
+                  >
+                    <q-menu>
+                      <q-list style="min-width: 120px">
+                        <q-item
+                          clickable
+                          v-close-popup
+                          @click="btnUpdateClick(props.row)"
+                        >
+                          <q-item-section avatar>
+                            <q-icon name="edit"></q-icon>
+                          </q-item-section>
+                          <q-item-section>Güncelle</q-item-section>
+                        </q-item>
+                        <q-separator />
+                        <q-item
+                          clickable
+                          v-close-popup
+                          @click="btnDeleteClick(props.row)"
+                        >
+                          <q-item-section avatar>
+                            <q-icon name="delete"></q-icon>
+                          </q-item-section>
+                          <q-item-section>Sil</q-item-section>
+                        </q-item>
+                      </q-list>
+                    </q-menu>
+                  </q-btn>
+                </div>
+              </div>
+            </q-card-section>
+          </q-card></q-td
+        >
       </q-tr>
     </template>
   </q-table>
 </template>
 <script>
-import { defineComponent } from "vue";
+import { formatMoney } from "src/util/helper-methods";
+import { defineComponent, computed } from "vue";
 
 const columns = [
   {
     name: "stockName",
     required: true,
-    label: "Ad",
+    label: "Stok",
     align: "left",
     field: (row) => row.name,
-    sortable: true,
-  },
-
-  {
-    name: "price",
-    required: true,
-    label: "Fiyat",
-    align: "left",
-    field: (row) => row.price,
-    sortable: true,
-  },
-
-  {
-    name: "Birim",
-    required: true,
-    label: "Birim",
-    align: "left",
-    field: (row) => row.unit,
-    sortable: true,
-  },
-
-  {
-    name: "valueAddedTax",
-    required: true,
-    label: "KDV",
-    align: "left",
-    field: (row) => row.valueAddedTax,
     sortable: true,
   },
 ];
 export default defineComponent({
   props: ["loading", "stockList"],
-  setup() {
+  setup(props, { emit }) {
     const stockList = computed(() => props.stockList);
     const loading = computed(() => props.loading);
+    const moneyFormat = (value) => {
+      return formatMoney(value);
+    };
+    const btnDeleteClick = (stock) => {
+      emit("stock-delete", stock);
+    };
+    const btnUpdateClick = (stock) => {
+      emit("stock-update", stock);
+    };
+    const countPriceWithTax = (price, tax) => {
+      let priceWithTax = price * (1 + tax / 100);
+      return formatMoney(priceWithTax);
+    };
     return {
       stockList,
       loading,
       columns,
+      moneyFormat,
+      btnDeleteClick,
+      btnUpdateClick,
+      countPriceWithTax,
     };
   },
 });

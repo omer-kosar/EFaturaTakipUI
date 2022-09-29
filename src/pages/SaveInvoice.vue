@@ -32,7 +32,8 @@
                       :loading="loadingFilterCustomer"
                       option-value="id"
                       option-label="name"
-                    ></q-select>
+                    >
+                    </q-select>
                   </q-item-section>
                 </q-item>
                 <q-item class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
@@ -384,7 +385,7 @@
 <script>
 import { date } from "quasar";
 import { searchCustomer } from "src/api/company.api";
-import { createInvoice } from "src/api/invoice.api";
+import { createInvoice, getInvoice, updateInvoice } from "src/api/invoice.api";
 import { search } from "src/api/stock.api";
 import { currencyOptions, taxValueOptions } from "src/util/constants";
 import {
@@ -395,7 +396,8 @@ import {
 import { success, warning } from "src/util/notify";
 import { defineComponent, ref, computed } from "vue";
 import VueNumberFormat from "vue-number-format";
-import { useQuasar } from "quasar";
+import { useRoute } from "vue-router";
+
 const columns = [
   {
     name: "stock",
@@ -477,7 +479,8 @@ const columnsMobile = [
 export default defineComponent({
   components: { VueNumberFormat },
   setup() {
-    const $q = useQuasar();
+    const route = useRoute();
+
     let invoice = ref({
       customerId: "",
       date: date.formatDate(new Date(), "DD.MM.YYYY"),
@@ -495,11 +498,12 @@ export default defineComponent({
         },
       ],
     });
-
+    let invoiceId = route.params.id;
     let stockOptions = ref([]);
     let customerOptions = ref([]);
     let filteredStockList = [];
     let filteredCustomerList = [];
+    let loading = ref(false);
     let loadingFilterStock = ref(false);
     let loadingFilterCustomer = ref(false);
 
@@ -666,6 +670,17 @@ export default defineComponent({
         (invoiceItem) => invoiceItem.stockId
       );
       invoice.value.date = formatDate(invoice.value.date);
+      if (invoiceId) {
+        loading.value = true;
+        updateInvoice(invoiceId, invoice.value)
+          .then((response) => {
+            success(response.data);
+          })
+          .finally(() => {
+            loading.value = false;
+          });
+        return;
+      }
       createInvoice(invoice.value)
         .then((response) => {
           success(response.data);
@@ -694,8 +709,31 @@ export default defineComponent({
       }
       return isValid;
     };
-    showTopNStockList();
-    showTopNCustomerList();
+
+    if (invoiceId) {
+      loadingFilterCustomer.value = true;
+      loadingFilterStock.value = true;
+      Promise.all([search(""), searchCustomer(""), getInvoice(invoiceId)])
+        .then((results) => {
+          filteredStockList = results[0].data;
+          stockOptions.value = filteredStockList;
+          filteredCustomerList = results[1].data;
+          customerOptions.value = filteredCustomerList;
+          invoice.value = results[2].data;
+          invoice.value.date = date.formatDate(
+            invoice.value.date,
+            "DD.MM.YYYY"
+          );
+        })
+        .finally(() => {
+          loading.value = false;
+          loadingFilterCustomer.value = false;
+          loadingFilterStock.value = false;
+        });
+    } else {
+      showTopNStockList();
+      showTopNCustomerList();
+    }
     currencyOptions.precision = 4;
     return {
       columns,
@@ -723,6 +761,7 @@ export default defineComponent({
       totalPrice,
       expanded: ref(true),
       saveInvoice,
+      loading,
       loadingFilterStock,
       loadingFilterCustomer,
     };
