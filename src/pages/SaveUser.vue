@@ -84,32 +84,6 @@
                   ></q-select>
                 </q-item-section>
               </q-item>
-
-              <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                <q-item-section>
-                  <q-select
-                    dense
-                    v-model="userModel.roles"
-                    use-input
-                    use-chips
-                    input-debounce="0"
-                    :options="roleList"
-                    class="q-mb-sm q-mr-sm"
-                    multiple
-                    emit-value
-                    map-options
-                    label="Rol"
-                  >
-                    <template v-if="userModel.roles" v-slot:append>
-                      <q-icon
-                        name="cancel"
-                        @click.stop="userModel.roles = []"
-                        class="cursor-pointer"
-                      />
-                    </template>
-                  </q-select>
-                </q-item-section>
-              </q-item>
               <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
                   <q-select
@@ -126,6 +100,8 @@
                     @pop-show="showTopNCompanyList"
                     @filter="filterCompany"
                     :loading="loadingFilterCompany"
+                    option-value="id"
+                    option-label="name"
                   ></q-select>
                 </q-item-section>
               </q-item>
@@ -153,7 +129,6 @@
 </template>
 <script>
 import { search } from "src/api/company.api";
-import { getRoles } from "src/api/role.api";
 import { createUser, getUserItem, updateUser } from "src/api/user.api";
 import { userType } from "src/util/constants";
 import { success } from "src/util/notify";
@@ -170,60 +145,20 @@ export default defineComponent({
     const router = useRouter();
 
     let userId = route.params.id;
-    // let userModel = ref({});
-    let userModel = ref({
-      firstName: "test",
-      lastName: "test",
-      email: "a@a.com",
-      phone: "05324992232",
-      password: "1",
-      // companyId: "",
-      userType: 1,
-      rolse: [],
-      // roles: [
-      //   {
-      //     value: "c4b10318-d550-4f66-ae69-1097b7d9aa6a",
-      //     label: "Accountant",
-      //   },
-      //   {
-      //     value: "c8d61d2d-d08d-4d54-9d36-4dc9e50662c3",
-      //     label: "Admin",
-      //   },
-      //   {
-      //     value: "644bace0-ccfb-42e5-b221-66b0725bf8f1",
-      //     label: "TaxPayer",
-      //   },
-      // ],
-    });
+    let userModel = ref({});
+    // let userModel = ref({
+    //   firstName: "test",
+    //   lastName: "test",
+    //   email: "a@a.com",
+    //   phone: "05324992232",
+    //   password: "1",
+    //   userType: 1,
+    // });
     let loading = ref(false);
     let loadingFilterCompany = ref(false);
-    let roleList = ref([]);
     let companyOptions = ref([]);
     let filteredCompanyList = [];
-    const getRoleList = () => {
-      if (roleList.value.length > 0) return;
-      getRoles().then((response) => {
-        roleList.value = response.data.map((role) => {
-          return {
-            label: role.label,
-            value: role.value,
-          };
-        });
-      });
-    };
-    const getUser = (id) => {
-      loading.value = true;
-      getUserItem(id)
-        .then((response) => {
-          userModel.value = response.data;
-          userModel.value.companyId = companyOptions.value.find(
-            (item) => item.value === userModel.value.companyId
-          );
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    };
+
     const btnSaveClick = () => {
       // if (!validate()) return;
 
@@ -254,9 +189,7 @@ export default defineComponent({
       if (filteredCompanyList.length > 0) return;
       search("")
         .then((response) => {
-          filteredCompanyList = response.data.map((companyItem) => {
-            return { label: companyItem.name, value: companyItem.id };
-          });
+          filteredCompanyList = response.data;
           companyOptions.value = filteredCompanyList;
         })
         .finally(() => {
@@ -269,9 +202,7 @@ export default defineComponent({
       search(val)
         .then((response) => {
           update(() => {
-            companyOptions.value = response?.data.map((companyItem) => {
-              return { label: companyItem.name, value: companyItem.id };
-            });
+            companyOptions.value = response?.data;
             filteredCompanyList = companyOptions.value;
           });
         })
@@ -280,18 +211,27 @@ export default defineComponent({
         });
     };
 
-    getRoleList();
-    showTopNCompanyList();
     if (userId) {
-      getUser(userId);
+      loadingFilterCompany.value = true;
+      loading.value = true;
+      Promise.all([search(""), getUserItem(userId)])
+        .then((responses) => {
+          filteredCompanyList = responses[0].data;
+          companyOptions.value = filteredCompanyList;
+          userModel.value = responses[1].data;
+        })
+        .finally(() => {
+          loadingFilterCompany.value = false;
+          loading.value = false;
+        });
+    } else {
+      showTopNCompanyList();
     }
-
     return {
       userTypeOptions,
       userModel,
       loading,
       loadingFilterCompany,
-      roleList,
       btnSaveClick,
       btnGoBackList,
       companyOptions,

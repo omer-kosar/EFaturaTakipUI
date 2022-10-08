@@ -10,8 +10,6 @@ import { getList } from "src/api/user.api"; import { getList } from
       </div>
       <component
         :is="$q.screen.lt.sm ? 'GridUserListMobile' : 'GridUserList'"
-        :userList="userList"
-        :loading="loading"
         @user-delete="openDeleteWarning"
         @user-update="updateUser"
       />
@@ -35,11 +33,10 @@ import { getList } from "src/api/user.api"; import { getList } from
 import { defineComponent, ref } from "vue";
 import GridUserList from "src/components/UserList/GridUserList.vue";
 import GridUserListMobile from "src/components/UserList/GridUserListMobile.vue";
-import { getList, userDelete } from "src/api/user.api";
+import { userDelete } from "src/api/user.api";
 import { useRouter } from "vue-router";
 import DialogDeleteWarning from "src/components/Common/DialogDeleteWarning.vue";
-import { success } from "src/util/notify";
-
+import useUserRequests from "../composables/UseUserRequests";
 export default defineComponent({
   components: {
     GridUserList,
@@ -49,25 +46,14 @@ export default defineComponent({
   setup() {
     const router = useRouter();
 
-    let userList = ref([]);
-    let loading = ref(false);
     let dialogUserFormState = ref(false);
     const selectedUser = ref({});
     let deleteWarningState = ref(false);
-
+    const { deleteUser: removeUser } = useUserRequests();
     const btnNewUserClick = () => {
       router.push({ name: "save-user" });
     };
-    const getUserList = () => {
-      loading.value = true;
-      getList()
-        .then((response) => {
-          userList.value = response.data;
-        })
-        .finally(() => {
-          loading.value = false;
-        });
-    };
+
     const updateUser = (user) => {
       router.push({ name: "save-user", params: { id: user.userId } });
     };
@@ -76,21 +62,11 @@ export default defineComponent({
       deleteWarningState.value = true;
     };
     const deleteUser = () => {
-      userDelete(selectedUser.value.userId)
-        .then((response) => {
-          deleteWarningState.value = false;
-          userList.value = userList.value.filter(
-            (user) => user.userId != selectedUser.value.userId
-          );
-          success(response.data);
-        })
-        .finally(() => {
-          deleteWarningState.value = false;
-        });
+      deleteWarningState.value = false;
+      removeUser(selectedUser.value.userId);
     };
-    getUserList();
+
     return {
-      userList,
       dialogUserFormState,
       btnNewUserClick,
       updateUser,
@@ -103,9 +79,9 @@ export default defineComponent({
 </script>
 <style lang="sass" scoped>
 .grid-height
-  height: calc(100vh - 150px)
+  height: calc(100vh - 140px)
   @media (min-width:360px) and (max-width:768px)
-        height: calc(100vh - 450px)
+        height: calc(100vh - 185px)
   @media (max-width:360px)
-        height: calc(100vh - 470px)
+        height: calc(100vh - 135px)
 </style>

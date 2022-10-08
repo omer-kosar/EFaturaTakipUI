@@ -53,7 +53,7 @@ const getInboxInvoiceListByCompanyId = (
   baslangicTarihi,
   bitisTarihi
 ) => {
-  let request = `invoices/getInboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  let request = `electronicinvoices/getInboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
   if (baslangicTarihi)
     request = `${request}&baslangicTarihi=${baslangicTarihi}`;
   if (bitisTarihi) {
@@ -68,7 +68,7 @@ const getOutboxInvoiceListByCompanyId = (
   baslangicTarihi,
   bitisTarihi
 ) => {
-  let request = `invoices/getOutboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
+  let request = `electronicinvoices/getOutboxInvoiceListByCompanyId/${companyId}?pageIndex=${pageIndex}&pageSize=${pageSize}`;
   if (baslangicTarihi)
     request = `${request}&baslangicTarihi=${baslangicTarihi}`;
   if (bitisTarihi) {

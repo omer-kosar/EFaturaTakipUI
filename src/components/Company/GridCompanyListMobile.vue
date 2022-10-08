@@ -165,7 +165,6 @@ const columns = [
     required: true,
     label: "Firma",
     align: "left",
-    // field: (row) => row.eFaturaNo,
     sortable: false,
   },
 ];

@@ -1,6 +1,6 @@
 <template>
   <q-table
-    :rows="userList"
+    :rows="items"
     :columns="columns"
     row-key="name"
     wrap-cells="true"
@@ -79,15 +79,19 @@
               class="q-gutter-y-sm"
             >
               <div class="row">
-                <div class="col-6 text-justify">
-                  <q-badge color="orange"
-                    >Parola: {{ props.row.password }}</q-badge
+                <div class="col-4 text-justify">
+                  Parola:&nbsp;
+                  <q-badge color="orange"> {{ props.row.password }}</q-badge>
+                </div>
+                <div class="col-4 text-justify">
+                  Tip:&nbsp;
+                  <q-badge color="orange">
+                    {{ props.row.typeDescription }}</q-badge
                   >
                 </div>
-                <div class="col-6 text-justify">
-                  <q-badge color="orange">
-                    Roller:{{ roleFormat(props.row.roles) }}</q-badge
-                  >
+                <div class="col-4 text-justify" v-show="props.row.companyName">
+                  Firma:&nbsp;
+                  <q-badge color="info"> {{ props.row.companyName }}</q-badge>
                 </div>
               </div>
             </q-card-section>
@@ -95,13 +99,16 @@
         </q-td>
       </q-tr>
     </template>
+    <template v-slot:loading>
+      <q-inner-loading showing color="primary" />
+    </template>
   </q-table>
 </template>
 
 <script>
-import { defineComponent, computed } from "vue";
+import { defineComponent } from "vue";
 import { date } from "quasar";
-
+import useUserRequests from "../../composables/UseUserRequests";
 const columns = [
   {
     name: "",
@@ -160,27 +167,22 @@ const columns = [
   },
 ];
 export default defineComponent({
-  props: ["loading", "userList"],
   setup(props, { emit }) {
-    const userList = computed(() => props.userList);
-    const loading = computed(() => props.loading);
-    const roleFormat = (roles) => {
-      return roles.join(",");
+    const { userList: items, loading, fetchAll } = useUserRequests();
+    const btnDeleteClick = (user) => {
+      emit("user-delete", user);
     };
-    const btnDeleteClick = (stock) => {
-      emit("user-delete", stock);
-    };
-    const btnUpdateClick = (stock) => {
-      emit("user-update", stock);
+    const btnUpdateClick = (user) => {
+      emit("user-update", user);
     };
     const formatDate = (val) => {
       return date.formatDate(val, "DD.MM.YYYY");
     };
+    fetchAll();
     return {
-      userList,
+      items,
       loading,
       columns,
-      roleFormat,
       btnDeleteClick,
       btnUpdateClick,
       formatDate,
