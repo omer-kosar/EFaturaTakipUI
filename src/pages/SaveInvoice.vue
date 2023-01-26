@@ -325,39 +325,12 @@
               </div>
             </div>
           </q-card-section>
-          <q-card-section class="q-gutter-y-xs">
-            <div class="row justify-end">
-              <div class="col-xs-6 col-md-3">
-                <q-separator></q-separator>
-                ARA TOPLAM
-              </div>
-              <div class="col-xs-6 col-md-3">
-                <q-separator></q-separator>
-                {{ totalPriceWithoutTax }}
-              </div>
-            </div>
-            <div class="row justify-end">
-              <div class="col-xs-6 col-md-3">
-                <q-separator></q-separator>
-                TOPLAM KDV
-              </div>
-              <div class="col-xs-6 col-md-3">
-                <q-separator></q-separator>
-                {{ totalTax }}
-              </div>
-            </div>
 
-            <div class="row text-weight-bold justify-end">
-              <div class="col-xs-6 col-md-3">
-                <q-separator></q-separator>
-                GENEL TOPLAM
-              </div>
-              <div class="col-xs-6 col-md-3">
-                <q-separator></q-separator>
-                {{ totalPrice }}
-              </div>
-            </div>
-          </q-card-section>
+          <invoice-summary
+            :totalPrice="totalPrice"
+            :totalPriceWithoutTax="totalPriceWithoutTax"
+            :totalTax="totalTax"
+          ></invoice-summary>
         </q-card>
       </div>
     </div>
@@ -380,6 +353,17 @@
         />
       </q-fab>
     </q-page-sticky>
+    <q-inner-loading
+      :showing="loading"
+      label="Lütfen bekleyiniz..."
+      label-class="text-teal"
+      label-style="font-size: 1.1em"
+    />
+    <dialog-invoice-menu
+      :id="newInvoiceId"
+      :dialogState="dialogInvoiceMenuState"
+      @dialog-invoice-menu-close="invoiceMenuClose"
+    ></dialog-invoice-menu>
   </q-page>
 </template>
 <script>
@@ -388,16 +372,13 @@ import { searchCustomer } from "src/api/company.api";
 import { createInvoice, getInvoice, updateInvoice } from "src/api/invoice.api";
 import { search } from "src/api/stock.api";
 import { currencyOptions, taxValueOptions } from "src/util/constants";
-import {
-  convertDecimal,
-  formatDate,
-  formatMoney,
-} from "src/util/helper-methods";
+import { convertDecimal, formatDate } from "src/util/helper-methods";
 import { success, warning } from "src/util/notify";
 import { defineComponent, ref, computed } from "vue";
 import VueNumberFormat from "vue-number-format";
 import { useRoute } from "vue-router";
-
+import DialogInvoiceMenu from "../components/Invoice/DialogInvoiceMenu.vue";
+import InvoiceSummary from "../components/Invoice/InvoiceSummary.vue";
 const columns = [
   {
     name: "stock",
@@ -477,28 +458,31 @@ const columnsMobile = [
   },
 ];
 export default defineComponent({
-  components: { VueNumberFormat },
+  components: { VueNumberFormat, DialogInvoiceMenu, InvoiceSummary },
   setup() {
     const route = useRoute();
-
-    let invoice = ref({
-      customerId: "",
-      date: date.formatDate(new Date(), "DD.MM.YYYY"),
-      comment: "",
-      invoiceItems: [
-        {
-          stockId: "",
-          quantity: 1,
-          price: 0,
-          priceWithTax: 0,
-          tax: 0,
-          totalPrice: 0,
-          totalPriceWithTax: 0,
-          comment: "",
-        },
-      ],
-    });
+    const initialInvoice = () => {
+      return {
+        customerId: "",
+        date: date.formatDate(new Date(), "DD.MM.YYYY"),
+        comment: "",
+        invoiceItems: [
+          {
+            stockId: "",
+            quantity: 1,
+            price: 0,
+            priceWithTax: 0,
+            tax: 0,
+            totalPrice: 0,
+            totalPriceWithTax: 0,
+            comment: "",
+          },
+        ],
+      };
+    };
+    let invoice = ref(initialInvoice());
     let invoiceId = route.params.id;
+    let newInvoiceId = ref("");
     let stockOptions = ref([]);
     let customerOptions = ref([]);
     let filteredStockList = [];
@@ -506,26 +490,22 @@ export default defineComponent({
     let loading = ref(false);
     let loadingFilterStock = ref(false);
     let loadingFilterCustomer = ref(false);
-
+    let dialogInvoiceMenuState = ref(false);
     const totalPriceWithoutTax = computed(() => {
       const summary = invoice.value.invoiceItems.reduce((total, invoice) => {
         return total + invoice.price * invoice.quantity;
       }, 0);
-      return formatMoney(summary);
+      return summary;
     });
 
     const totalPrice = computed(() => {
       const summary = invoice.value.invoiceItems.reduce((total, invoice) => {
         return total + invoice.totalPriceWithTax;
       }, 0);
-      return formatMoney(summary);
+      return summary;
     });
     const totalTax = computed(() => {
-      let price = convertDecimal(totalPrice.value.replace("₺", ""));
-      let priceWithoutTax = convertDecimal(
-        totalPriceWithoutTax.value.replace("₺", "")
-      );
-      return formatMoney(price - priceWithoutTax);
+      return totalPrice.value - totalPriceWithoutTax.value;
     });
     const showTopNStockList = () => {
       loadingFilterStock.value = true;
@@ -663,15 +643,14 @@ export default defineComponent({
       row.comment = "";
     };
     const saveInvoice = () => {
-      // $q.loading.show();
       let validationResult = validateInvoice();
       if (!validationResult) return;
       invoice.value.invoiceItems = invoice.value.invoiceItems.filter(
         (invoiceItem) => invoiceItem.stockId
       );
       invoice.value.date = formatDate(invoice.value.date);
+      loading.value = true;
       if (invoiceId) {
-        loading.value = true;
         updateInvoice(invoiceId, invoice.value)
           .then((response) => {
             success(response.data);
@@ -683,10 +662,12 @@ export default defineComponent({
       }
       createInvoice(invoice.value)
         .then((response) => {
-          success(response.data);
+          newInvoiceId.value = response.data;
+          dialogInvoiceMenuState.value = true;
+          success("Fatura kaydedildi.");
         })
         .finally(() => {
-          // $q.loading.hide();
+          loading.value = false;
         });
     };
     const validateInvoice = () => {
@@ -713,6 +694,7 @@ export default defineComponent({
     if (invoiceId) {
       loadingFilterCustomer.value = true;
       loadingFilterStock.value = true;
+      loading.value = true;
       Promise.all([search(""), searchCustomer(""), getInvoice(invoiceId)])
         .then((results) => {
           filteredStockList = results[0].data;
@@ -734,6 +716,11 @@ export default defineComponent({
       showTopNStockList();
       showTopNCustomerList();
     }
+
+    const invoiceMenuClose = () => {
+      dialogInvoiceMenuState.value = false;
+      invoice.value = initialInvoice();
+    };
     currencyOptions.precision = 4;
     return {
       columns,
@@ -764,6 +751,9 @@ export default defineComponent({
       loading,
       loadingFilterStock,
       loadingFilterCustomer,
+      dialogInvoiceMenuState,
+      invoiceMenuClose,
+      newInvoiceId,
     };
   },
 });

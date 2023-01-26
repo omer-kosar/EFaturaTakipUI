@@ -17,7 +17,7 @@ const Unit = {
 
 const CompanyType = {
   Person: 1,
-  SoleProprietorship: 2,
+  PrivateCompany: 2,
   Corporate: 3,
 };
 const mapUserType = new Map([
@@ -148,7 +148,51 @@ const taxValueOptions = [
   { label: "%1", value: TaxValueAdded.Bir },
   { label: "%0", value: TaxValueAdded.Sifir },
 ];
-
+const invoiceScenarioType = {
+  baseInvoice: 0,
+  comercialInvoice: 1,
+  invoiceWithPassanger: 2,
+  export: 3,
+  eArchive: 4,
+  hal: 5,
+  kamu: 6,
+};
+const invoiceScenarioTypeOptions = [
+  { label: "Temel", value: invoiceScenarioType.baseInvoice },
+  { label: "Ticari", value: invoiceScenarioType.comercialInvoice },
+  { label: "Yolcu", value: invoiceScenarioType.invoiceWithPassanger },
+  { label: "İhracat", value: invoiceScenarioType.export },
+  { label: "E-Arşiv", value: invoiceScenarioType.eArchive },
+  { label: "Hal", value: invoiceScenarioType.hal },
+  { label: "Kamu", value: invoiceScenarioType.kamu },
+];
+const invoiceType = {
+  sales: 0,
+  return: 1,
+  tax: 2,
+  exception: 3,
+  taxBase: 4,
+  exportSaved: 6,
+  sgk: 7,
+  broker: 8,
+  hksSales: 9,
+  hksBroker: 10,
+  withholdingReturn: 11,
+};
+const invoiceTypeOptions = [
+  { label: "Seçiniz", value: "" },
+  { label: "Satış", value: invoiceType.sales },
+  { label: "İade", value: invoiceType.return },
+  { label: "Tevkifat", value: invoiceType.tax },
+  { label: "İstisna", value: invoiceType.exception },
+  { label: "Özel Matrah", value: invoiceType.taxBase },
+  { label: "İhraç Kayıtlı", value: invoiceType.exportSaved },
+  { label: "Sgk", value: invoiceType.sgk },
+  { label: "Komisyoncu", value: invoiceType.broker },
+  { label: "Hal Satış", value: invoiceType.hksSales },
+  { label: "Hal Komisyoncu", value: invoiceType.hksBroker },
+  { label: "Tevkifat İade", value: invoiceType.withholdingReturn },
+];
 export {
   userType,
   mapUserType,
@@ -161,4 +205,8 @@ export {
   guessMenu,
   currencyOptions,
   taxValueOptions,
+  invoiceScenarioType,
+  invoiceTypeOptions,
+  invoiceType,
+  invoiceScenarioTypeOptions,
 };

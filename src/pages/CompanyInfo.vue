@@ -248,7 +248,7 @@ import { useStore } from "vuex";
 const companyTypeOptions = [
   { label: "Bireysel", value: CompanyType.Person },
   { label: "Tüzel", value: CompanyType.Corporate },
-  { label: "Şahıs Şirketi", value: CompanyType.SoleProprietorship },
+  { label: "Şahıs Şirketi", value: CompanyType.PrivateCompany },
 ];
 export default defineComponent({
   setup() {

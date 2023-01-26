@@ -45,7 +45,7 @@ import GridCustomerList from "src/components/Company/GridCustomerList.vue";
 import GridCustomerListMobile from "src/components/Company/GridCustomerListMobile.vue";
 import DialogDeleteWarning from "src/components/Common/DialogDeleteWarning.vue";
 import { useRouter } from "vue-router";
-import { getCustomerList } from "src/api/company.api";
+import { getCustomerList, companyDelete } from "src/api/company.api";
 
 export default defineComponent({
   components: { GridCustomerList, GridCustomerListMobile, DialogDeleteWarning },

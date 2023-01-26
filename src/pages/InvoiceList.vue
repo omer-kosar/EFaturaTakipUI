@@ -16,11 +16,13 @@
     <div class="q-mt-sm">
       <component
         :is="$q.screen.lt.sm ? 'GridInvoiceListMobile' : 'GridInvoiceList'"
-        :invoiceList="invoiceList"
+        :invoiceList="filteredInvoiceList"
         :loading="loading"
         @invoice-delete="openDeleteWarning"
         @invoice-update="updateInvoice"
         @show-invoice-items="showInvioceItemList"
+        @show-invoice="showInvoice"
+        @convert-einvoice="convertEInvoice"
       />
     </div>
     <dialog-delete-warning
@@ -41,11 +43,18 @@
       :loading="loadingInvoiceItemList"
       @dialog-invoice-item-list-close="dialogInvoiceItemListState = false"
     ></dialog-invoice-item-list>
+    <dialog-convert-e-invoice
+      :dialogState="dialogConvertEInvoiceState"
+      :invoiceId="selectedInvoice.invoiceId"
+      @dialog-convert-einvoice-close="dialogConvertEInvoiceState = false"
+    >
+    </dialog-convert-e-invoice>
   </q-page>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import DialogDeleteWarning from "src/components/Common/DialogDeleteWarning.vue";
+import DialogConvertEInvoice from "src/components/Invoice/DialogConvertEInvoice.vue";
 import GridInvoiceList from "src/components/Invoice/GridInvoiceList.vue";
 import GridInvoiceListMobile from "src/components/Invoice/GridInvoiceListMobile.vue";
 import {
@@ -56,14 +65,19 @@ import {
 import { success } from "src/util/notify";
 import { useRouter } from "vue-router";
 import DialogInvoiceItemList from "src/components/Invoice/DialogInvoiceItemList.vue";
+import { useStore } from "vuex";
+
 export default defineComponent({
   components: {
     DialogDeleteWarning,
     GridInvoiceList,
     GridInvoiceListMobile,
     DialogInvoiceItemList,
+    DialogConvertEInvoice,
   },
   setup() {
+    const router = useRouter();
+    const store = useStore();
     let loading = ref(false);
     let loadingInvoiceItemList = ref(false);
     let invoiceList = ref([]);
@@ -72,7 +86,7 @@ export default defineComponent({
     let selectedInvoice = ref({});
     let deleteWarningState = ref(false);
     let dialogInvoiceItemListState = ref(false);
-    const router = useRouter();
+    let dialogConvertEInvoiceState = ref(false);
 
     const getInvoiceList = () => {
       loading.value = true;
@@ -84,6 +98,15 @@ export default defineComponent({
           loading.value = false;
         });
     };
+    const filteredInvoiceList = computed(() => {
+      if (!search) return invoiceList.value;
+      let filterText = search.value.toLocaleUpperCase("tr-TR");
+      return invoiceList.value.filter((invoice) => {
+        return invoice.customerName
+          .toLocaleUpperCase("tr-TR")
+          .includes(filterText);
+      });
+    });
     const deleteInvoice = () => {
       invoiceDelete(selectedInvoice.value.invoiceId)
         .then((response) => {
@@ -108,7 +131,6 @@ export default defineComponent({
       router.push({ name: "save-invoice" });
     };
     const showInvioceItemList = (invoice) => {
-      console.warn("show invoice>>>>>>>", invoice);
       loadingInvoiceItemList.value = true;
       getInvoiceItemList(invoice.invoiceId)
         .then((response) => {
@@ -119,6 +141,18 @@ export default defineComponent({
           loadingInvoiceItemList.value = false;
         });
     };
+    const showInvoice = (invoice) => {
+      let userCompanyId = store.getters["user/getCompanyId"];
+      window.open(
+        `${process.env.baseUrl}/ElectronicInvoices/ShowOutBoxInvoice/${invoice.eInvoiceId}/${userCompanyId}`,
+        "_blank"
+      );
+    };
+    const convertEInvoice = (invoice) => {
+      selectedInvoice.value = invoice;
+      dialogConvertEInvoiceState.value = true;
+    };
+
     getInvoiceList();
     return {
       loading,
@@ -133,6 +167,11 @@ export default defineComponent({
       dialogInvoiceItemListState,
       btnNewInvoiceClick,
       showInvioceItemList,
+      showInvoice,
+      convertEInvoice,
+      dialogConvertEInvoiceState,
+      selectedInvoice,
+      filteredInvoiceList,
     };
   },
 });

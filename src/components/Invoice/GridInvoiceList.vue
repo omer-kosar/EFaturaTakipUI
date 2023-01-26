@@ -29,6 +29,7 @@
                   clickable
                   v-close-popup
                   @click="btnUpdateClick(props.row)"
+                  v-if="!props.row.isConverted"
                 >
                   <q-item-section avatar>
                     <q-icon name="edit"></q-icon>
@@ -40,6 +41,7 @@
                   clickable
                   v-close-popup
                   @click="btnDeleteClick(props.row)"
+                  v-if="!props.row.isConverted"
                 >
                   <q-item-section avatar>
                     <q-icon name="delete"></q-icon>
@@ -52,19 +54,31 @@
                   @click="btnDetailClick(props.row)"
                 >
                   <q-item-section avatar>
-                    <q-icon name="visibility"></q-icon>
+                    <q-icon name="info"></q-icon>
                   </q-item-section>
                   <q-item-section>Detay</q-item-section>
                 </q-item>
                 <q-item
                   clickable
                   v-close-popup
-                  @click="btnDeleteClick(props.row)"
+                  @click="btnConvertClick(props.row)"
+                  v-if="!props.row.isConverted"
                 >
                   <q-item-section avatar>
                     <q-icon name="change_circle"></q-icon>
                   </q-item-section>
                   <q-item-section>E-Faturaya Dönüştür</q-item-section>
+                </q-item>
+                <q-item
+                  clickable
+                  v-close-popup
+                  @click="btnShowClick(props.row)"
+                  v-if="props.row.isConverted"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="visibility"></q-icon>
+                  </q-item-section>
+                  <q-item-section>Göster</q-item-section>
                 </q-item>
               </q-list>
             </q-menu>
@@ -143,6 +157,12 @@ export default defineComponent({
     const btnDetailClick = (invoice) => {
       emit("show-invoice-items", invoice);
     };
+    const btnShowClick = (invoice) => {
+      emit("show-invoice", invoice);
+    };
+    const btnConvertClick = (invoice) => {
+      emit("convert-einvoice", invoice);
+    };
 
     return {
       invoiceList,
@@ -153,6 +173,8 @@ export default defineComponent({
       btnDeleteClick,
       btnUpdateClick,
       btnDetailClick,
+      btnShowClick,
+      btnConvertClick,
     };
   },
 });

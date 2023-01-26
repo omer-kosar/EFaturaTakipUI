@@ -523,10 +523,8 @@ export default defineComponent({
     };
     const filteredList = computed(() => {
       if (searchText.value !== "" && searchText.value) {
-        console.warn("list>>>>>>", inboxInvoiceList.value);
         return inboxInvoiceList.value.filter((item) => {
           let filterText = searchText.value.toLocaleUpperCase("tr-TR");
-          console.warn("item===>>>>>", item);
           return (
             item.targetTitle?.toLocaleUpperCase("tr-TR").includes(filterText) ||
             item.targetTcknVkn?.includes(filterText) ||

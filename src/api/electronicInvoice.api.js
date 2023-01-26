@@ -76,7 +76,14 @@ const getOutboxInvoiceListByCompanyId = (
   }
   return api.get(request);
 };
-
+const convertInvoiceToElectronicInvoice = (
+  invoiceId,
+  invoiceScenarioType,
+  invoiceType
+) =>
+  api.get(
+    `electronicinvoices/convertInvoiceToElectronicInvoice?invoiceId=${invoiceId}&invoiceScenarioType=${invoiceScenarioType}&invoiceType=${invoiceType}`
+  );
 export {
   getInboxInvoiceList,
   getOutboxInvoiceList,
@@ -86,4 +93,5 @@ export {
   sendOutBoxInvoiceEMail,
   getInboxInvoiceListByCompanyId,
   getOutboxInvoiceListByCompanyId,
+  convertInvoiceToElectronicInvoice,
 };

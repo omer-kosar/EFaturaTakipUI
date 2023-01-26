@@ -19,50 +19,27 @@
           :loading="loading"
         />
       </q-card-section>
-      <q-card-section class="q-gutter-y-xs">
-        <div class="row justify-end">
-          <div class="col-xs-6 col-md-3">
-            <q-separator></q-separator>
-            ARA TOPLAM
-          </div>
-          <div class="col-xs-6 col-md-3">
-            <q-separator></q-separator>
-            {{ totalPriceWithoutTax }}
-          </div>
-        </div>
-        <div class="row justify-end">
-          <div class="col-xs-6 col-md-3">
-            <q-separator></q-separator>
-            TOPLAM KDV
-          </div>
-          <div class="col-xs-6 col-md-3">
-            <q-separator></q-separator>
-            {{ totalTax }}
-          </div>
-        </div>
-
-        <div class="row text-weight-bold justify-end">
-          <div class="col-xs-6 col-md-3">
-            <q-separator></q-separator>
-            GENEL TOPLAM
-          </div>
-          <div class="col-xs-6 col-md-3">
-            <q-separator></q-separator>
-            {{ totalPrice }}
-          </div>
-        </div>
-      </q-card-section>
+      <invoice-summary
+        :totalTax="totalTax"
+        :totalPrice="totalPrice"
+        :totalPriceWithoutTax="totalPriceWithoutTax"
+      ></invoice-summary>
     </q-card>
   </q-dialog>
 </template>
 <script>
-import { convertDecimal, formatMoney } from "src/util/helper-methods";
+import { formatMoney } from "src/util/helper-methods";
 import { defineComponent, computed, ref } from "vue";
 import GridInvoiceItemList from "./GridInvoiceItemList.vue";
 import GridInvoiceItemListMobile from "./GridInvoiceItemListMobile.vue";
+import InvoiceSummary from "./InvoiceSummary.vue";
 export default defineComponent({
   props: ["dialogState", "invoiceItemList", "loading"],
-  components: { GridInvoiceItemList, GridInvoiceItemListMobile },
+  components: {
+    GridInvoiceItemList,
+    GridInvoiceItemListMobile,
+    InvoiceSummary,
+  },
   setup(props, { emit }) {
     let dialogState = computed({
       get: () => {
@@ -78,29 +55,27 @@ export default defineComponent({
       const summary = invoiceItemList.value.reduce((total, invoiceItem) => {
         return total + invoiceItem.price * invoiceItem.quantity;
       }, 0);
-      return formatMoney(summary);
+      return summary;
     });
 
     const totalPrice = computed(() => {
       const summary = invoiceItemList.value.reduce((total, invoiceItem) => {
         return total + invoiceItem.totalPriceWithTax;
       }, 0);
-      return formatMoney(summary);
+      return summary;
     });
+
     const totalTax = computed(() => {
-      let price = convertDecimal(totalPrice.value.replace("₺", ""));
-      let priceWithoutTax = convertDecimal(
-        totalPriceWithoutTax.value.replace("₺", "")
-      );
-      return formatMoney(price - priceWithoutTax);
+      return totalPrice.value - totalPriceWithoutTax.value;
     });
+
     return {
       dialogState,
       invoiceItemList,
       loading,
-      totalPriceWithoutTax,
-      totalPrice,
       totalTax,
+      totalPrice,
+      totalPriceWithoutTax,
     };
   },
 });

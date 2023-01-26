@@ -9,7 +9,6 @@
     </q-item-section>
   </q-item>
 </template>
-
 <script>
 import { defineComponent } from "vue";
 
