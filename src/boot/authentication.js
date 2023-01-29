@@ -1,8 +1,6 @@
 import { boot } from "quasar/wrappers";
 import { getItemFromStorage } from "src/util/local-storage";
 
-// "async" is optional;
-// more info on params: https://v2.quasar.dev/quasar-cli/boot-
 const isUserExist = () => {
   let user = getItemFromStorage("user");
   let token = user?.token;

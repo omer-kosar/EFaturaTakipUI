@@ -131,6 +131,7 @@ export default defineComponent({
         })
         .finally(() => {
           loading.value = false;
+          disable.value = false;
         });
     };
     return {
